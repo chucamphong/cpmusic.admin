@@ -8,7 +8,7 @@ type Props = {
 } & AvatarProps;
 
 const ForwardRefAvatar = React.forwardRef<AntdAvatar, Props>(({ cursor, ...rest }, ref) => {
-    return <AntdAvatar {...rest} ref={ref}/>;
+    return <AntdAvatar {...rest} ref={ref} />;
 });
 
 const Avatar: React.FC<Props> = styled(ForwardRefAvatar)<Props>`

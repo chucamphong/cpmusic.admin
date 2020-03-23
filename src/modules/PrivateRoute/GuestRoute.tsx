@@ -8,8 +8,8 @@ const GuestRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
     return (
         <Route {...rest} render={({ location }) => {
             return !auth.isAuthenticated() ? children :
-                <Redirect to={{ pathname: "/", state: { from: location } }}/>;
-        }}/>
+                <Redirect to={{ pathname: "/", state: { from: location } }} />;
+        }} />
     );
 };
 

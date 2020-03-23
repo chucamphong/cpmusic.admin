@@ -35,7 +35,7 @@ const DashBoardContainer: React.FC = () => {
                 <Menu.Item key={"/thong-tin"}>
                     <a href={"/thong-tin"}>Thông tin</a>
                 </Menu.Item>
-                <Menu.Divider/>
+                <Menu.Divider />
                 <Menu.Item key={"/dang-xuat"}>
                     <a href={"/dang-xuat"} onClick={logout}>Đăng xuất</a>
                 </Menu.Item>
@@ -51,34 +51,34 @@ const DashBoardContainer: React.FC = () => {
                 </Logo>
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]}>
                     <Menu.Item key="/">
-                        <HomeOutlined/>
+                        <HomeOutlined />
                         <Link to="/">
                             <span>Trang chủ</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="/users">
-                        <UserOutlined/>
+                        <UserOutlined />
                         <Link to="/users">
                             <span>Thành viên</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <VideoCameraOutlined/>
+                        <VideoCameraOutlined />
                         <span>nav 2</span>
                     </Menu.Item>
                     <Menu.Item key="3">
-                        <UploadOutlined/>
+                        <UploadOutlined />
                         <span>nav 3</span>
                     </Menu.Item>
                 </Menu>
             </Layout.Sider>
-            {(isMobile && !collapsed) && <Overlay onClick={toggleSider}/>}
+            {(isMobile && !collapsed) && <Overlay onClick={toggleSider} />}
             <Layout hasFixedHeader collapsed={collapsed}>
                 <Layout.Header fixed>
-                    <StyledMenuOutlined onClick={toggleSider}/>
+                    <StyledMenuOutlined onClick={toggleSider} />
                     <Dropdown overlay={UserMenu} overlayStyle={{ width: 150 }} trigger={["click"]}>
                         <Avatar cursor size={"large"} alt="Avatar">
-                            <UserOutlined/>
+                            <UserOutlined />
                         </Avatar>
                     </Dropdown>
                 </Layout.Header>

@@ -16,9 +16,9 @@ const AppContainer: React.FC = () => {
 
     const handleAuthenticate = () => {
         if (auth.isAuthenticated() && !isMember(auth.user)) {
-            return <Redirect to={"/"}/>;
+            return <Redirect to={"/"} />;
         } else {
-            return <Redirect to={"/dang-nhap"}/>;
+            return <Redirect to={"/dang-nhap"} />;
         }
     };
 
@@ -26,13 +26,13 @@ const AppContainer: React.FC = () => {
         <>
             {handleAuthenticate()}
 
-            <LoadingContainer/>
+            <LoadingContainer />
             <Switch>
                 <Route exact path={"/"}>
-                    <DashBoardContainer/>
+                    <DashBoardContainer />
                 </Route>
                 <Route path={"/dang-nhap"}>
-                    <LoginContainer/>
+                    <LoginContainer />
                 </Route>
             </Switch>
         </>

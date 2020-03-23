@@ -8,7 +8,7 @@ const LoadingContainer = () => {
 
     return loading.isLoading() ? (
         <Background>
-            <Spin size="large"/>
+            <Spin size="large" />
         </Background>
     ) : null;
 };

@@ -70,11 +70,11 @@ const LoginContainer: React.FC = () => {
                     <Form.Item validateStatus={errors?.email ? "error" : "validating"}
                         help={errors?.email?.toString()}
                         name="email" rules={rules.email}>
-                        <Input/>
+                        <Input />
                     </Form.Item>
                     <Form.Item validateStatus={errors?.password ? "error" : "validating"}
                         help={errors?.password?.toString()} name="password" rules={rules.password}>
-                        <Input.Password/>
+                        <Input.Password />
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit" disabled={loading} loading={loading} block>

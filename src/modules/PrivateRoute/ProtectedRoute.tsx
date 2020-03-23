@@ -8,8 +8,8 @@ const ProtectedRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
     return (
         <Route {...rest} render={({ location }) => {
             return auth.isAuthenticated() ? children :
-                <Redirect to={{ pathname: "/dang-nhap", state: { from: location } }}/>;
-        }}/>
+                <Redirect to={{ pathname: "/dang-nhap", state: { from: location } }} />;
+        }} />
     );
 };
 
