@@ -1,0 +1,53 @@
+{
+    "extends": [
+        "react-app",
+        "plugin:jsx-a11y/recommended"
+    ],
+    "plugins": [
+        "react-hooks"
+    ],
+    "settings": {
+        "react": {
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "version": "detect"
+        },
+        "propWrapperFunctions": [
+            "forbidExtraProps",
+            {
+                "property": "freeze",
+                "object": "Object"
+            },
+            {
+                "property": "myFavoriteWrapper"
+            }
+        ],
+        "linkComponents": [
+            "Hyperlink",
+            {
+                "name": "Link",
+                "linkAttribute": "to"
+            }
+        ]
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "semi": "error",
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "jsx-quotes": [
+            "error",
+            "prefer-double"
+        ]
+    }
+}
