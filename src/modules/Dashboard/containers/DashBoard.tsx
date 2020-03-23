@@ -1,15 +1,15 @@
-import React, { MouseEvent, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Dropdown, Menu } from "antd";
 import { HomeOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import { useMedia } from "react-use";
-import useAuth from "modules/Auth/hooks/useAuth";
-import StyledMenuOutlined from "modules/Dashboard/components/StyledMenuOutlined";
-import Logo from "modules/Dashboard/components/Logo";
+import { Dropdown, Menu } from "antd";
+import { useAuth } from "modules/Auth";
 import Avatar from "modules/Common/components/Avatar";
 import Layout from "modules/Common/components/Layout";
-import MyTheme from "utils/theme";
+import Logo from "modules/Dashboard/components/Logo";
 import Overlay from "modules/Dashboard/components/Overlay";
+import StyledMenuOutlined from "modules/Dashboard/components/StyledMenuOutlined";
+import React, { MouseEvent, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useMedia } from "react-use";
+import MyTheme from "utils/theme";
 
 const siderWidth = MyTheme.sider.width;
 

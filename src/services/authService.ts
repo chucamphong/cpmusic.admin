@@ -1,6 +1,6 @@
-import service from "./service";
 import { AxiosRequestConfig } from "axios";
 import { LoginResponse, User } from "modules/Auth/types";
+import service from "./service";
 
 function login(email: string, password: string) {
     return service.post<LoginResponse>("login", { email, password });

@@ -1,9 +1,9 @@
+import { AxiosError, AxiosResponse } from "axios";
+import { actions } from "modules/Auth";
+import { LoginFailedResponse, LoginResponse, User } from "modules/Auth/types";
+import { actions as loadingActions } from "modules/Loading";
 import { all, call, fork, put, take } from "redux-saga/effects";
 import authService from "services/authService";
-import { AxiosError, AxiosResponse } from "axios";
-import { LoginFailedResponse, LoginResponse, User } from "modules/Auth/types";
-import * as actions from "modules/Auth/store/actions";
-import * as loadingAction from "modules/Loading/store/actions";
 
 type LoginActionType = ReturnType<typeof actions.login.request>;
 
@@ -49,17 +49,17 @@ export function* fetchMe() {
     while (true) {
         yield take(actions.me.request);
 
-        yield put(loadingAction.pending());
+        yield put(loadingActions.pending());
 
         try {
             const response: AxiosResponse<User> = yield call(authService.me);
             checkRole(response.data.role);
 
             yield put(actions.me.success(response.data));
-            yield put(loadingAction.success());
+            yield put(loadingActions.success());
         } catch (error) {
             yield put(actions.me.failure(error));
-            yield put(loadingAction.failure());
+            yield put(loadingActions.failure());
         }
     }
 }
@@ -67,14 +67,14 @@ export function* fetchMe() {
 export function* logout() {
     while (true) {
         yield take(actions.logout.request);
-        yield put(loadingAction.pending());
+        yield put(loadingActions.pending());
         try {
             yield call(authService.logout);
             yield put(actions.logout.success());
-            yield put(loadingAction.success());
+            yield put(loadingActions.success());
         } catch (error) {
             yield put(actions.logout.failure());
-            yield put(loadingAction.failure());
+            yield put(loadingActions.failure());
         }
     }
 }

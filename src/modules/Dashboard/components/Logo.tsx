@@ -1,5 +1,5 @@
-import styled from "styled-components";
 import { memo } from "react";
+import styled from "styled-components";
 
 const Logo = styled.div`
     margin: 7px;

@@ -25,9 +25,5 @@
     },
     "include": [
         "src"
-    ],
-    "exclude": [
-        "public",
-        "node_modules"
     ]
 }

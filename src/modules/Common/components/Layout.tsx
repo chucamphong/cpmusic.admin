@@ -1,10 +1,10 @@
-import React from "react";
-import styled, { css } from "styled-components";
 import { Layout as AntdLayout } from "antd";
 import { BasicProps } from "antd/es/layout/layout";
+import Content from "modules/Common/components/Content";
 import Header from "modules/Common/components/Header";
 import Sider from "modules/Common/components/Sider";
-import Content from "modules/Common/components/Content";
+import React from "react";
+import styled, { css } from "styled-components";
 
 type Props = {
     hasFixedHeader?: boolean;

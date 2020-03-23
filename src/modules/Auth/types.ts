@@ -1,6 +1,6 @@
-import { ActionType } from "typesafe-actions";
 import { RawRule } from "@casl/ability";
 import { actions } from "modules/Auth";
+import { ActionType } from "typesafe-actions";
 
 export type Credentials = {
     email: string;

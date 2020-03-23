@@ -1,10 +1,10 @@
-import React from "react";
 import { useAuth } from "modules/Auth";
+import { User } from "modules/Auth/types";
+import DashBoardContainer from "modules/Dashboard/containers/DashBoard";
 import LoadingContainer from "modules/Loading/containers/Loading";
 import LoginContainer from "modules/Login/containers/Login";
-import DashBoardContainer from "modules/Dashboard/containers/DashBoard";
-import { Route, Redirect, Switch } from "react-router-dom";
-import { User } from "../../Auth/types";
+import React from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 const AppContainer: React.FC = () => {
     const auth = useAuth();
@@ -16,17 +16,9 @@ const AppContainer: React.FC = () => {
 
     const handleAuthenticate = () => {
         if (auth.isAuthenticated() && !isMember(auth.user)) {
-            return <Redirect to={"/"} />;
+            return <Redirect to={"/"}/>;
         } else {
-            return <Redirect to={"/dang-nhap"} />;
-        }
-    };
-
-    const CheckRole: React.FC = ({ children }) => {
-        if (auth.isAuthenticated() && ["admin", "mod"].includes(auth.user?.role ?? "")) {
-            return <React.Fragment>{children}</React.Fragment>;
-        } else {
-            return <Redirect to={"/dang-nhap"} />;
+            return <Redirect to={"/dang-nhap"}/>;
         }
     };
 
@@ -34,13 +26,13 @@ const AppContainer: React.FC = () => {
         <>
             {handleAuthenticate()}
 
-            <LoadingContainer />
+            <LoadingContainer/>
             <Switch>
                 <Route exact path={"/"}>
-                    <DashBoardContainer />
+                    <DashBoardContainer/>
                 </Route>
                 <Route path={"/dang-nhap"}>
-                    <LoginContainer />
+                    <LoginContainer/>
                 </Route>
             </Switch>
         </>

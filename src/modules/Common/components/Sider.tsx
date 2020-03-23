@@ -1,7 +1,7 @@
-import React from "react";
-import styled, { css } from "styled-components";
 import { Layout } from "antd";
 import { SiderProps } from "antd/lib/layout/Sider";
+import React from "react";
+import styled, { css } from "styled-components";
 
 type Props = {
     fixed?: boolean;

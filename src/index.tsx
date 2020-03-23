@@ -1,9 +1,9 @@
+import AppContainer from "modules/App/containers/App";
 import React from "react";
 import ReactDOM from "react-dom";
-import AppContainer from "modules/App/containers/App";
 import { Provider } from "react-redux";
-import store from "store/store";
 import { BrowserRouter } from "react-router-dom";
+import store from "store/store";
 import { ThemeProvider } from "styled-components";
 import myTheme from "utils/theme";
 import * as serviceWorker from "./serviceWorker";

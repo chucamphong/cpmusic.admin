@@ -1,5 +1,5 @@
-import styled from "styled-components";
 import { MenuOutlined } from "@ant-design/icons";
+import styled from "styled-components";
 
 const StyledMenuOutlined = styled(MenuOutlined)`
     font-size: 18px;

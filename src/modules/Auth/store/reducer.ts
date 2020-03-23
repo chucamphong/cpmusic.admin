@@ -1,6 +1,6 @@
 import produce from "immer";
-import { Reducer } from "typesafe-actions";
 import { AuthAction, AuthState } from "modules/Auth/types";
+import { Reducer } from "typesafe-actions";
 
 type AuthReducer = Reducer<Readonly<AuthState>, AuthAction>;
 

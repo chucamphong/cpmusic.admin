@@ -1,6 +1,6 @@
-import React from "react";
+import { Row } from "antd";
 import Layout from "modules/Common/components/Layout";
-import { Row, Col } from "antd";
+import React from "react";
 
 const Error: React.FC = () => {
     return (

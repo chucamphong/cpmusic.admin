@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, notification, Row, Typography } from "antd";
-import { FieldData, Rules } from "modules/Login/types";
 import { useAuth } from "modules/Auth";
+import { FieldData, Rules } from "modules/Login/types";
+import React, { useEffect, useState } from "react";
 import useSelector from "store/hooks/useSelector";
 import { isDevelopment } from "utils/helpers";
 

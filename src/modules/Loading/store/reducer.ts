@@ -1,6 +1,6 @@
 import produce from "immer";
+import { actions } from "modules/Loading";
 import { ActionType, Reducer } from "typesafe-actions";
-import * as actions from "modules/Loading/store/actions";
 
 type State = {
     status: "nothing" | "pending" | "success" | "failure"

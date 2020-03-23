@@ -1,7 +1,7 @@
-import React from "react";
-import styled, { css } from "styled-components";
 import { Layout } from "antd";
 import { BasicProps } from "antd/es/layout/layout";
+import React from "react";
+import styled, { css } from "styled-components";
 
 type Props = {
     fixed?: boolean;

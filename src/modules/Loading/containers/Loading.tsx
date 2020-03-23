@@ -1,6 +1,6 @@
-import React from "react";
 import { Spin } from "antd";
 import { useLoading } from "modules/Loading";
+import React from "react";
 import Background from "../components/Background";
 
 const LoadingContainer = () => {
@@ -8,7 +8,7 @@ const LoadingContainer = () => {
 
     return loading.isLoading() ? (
         <Background>
-            <Spin size="large" />
+            <Spin size="large"/>
         </Background>
     ) : null;
 };

@@ -1,6 +1,5 @@
-import { createAsyncAction } from "typesafe-actions";
 import { Credentials, LoginFailedResponse, LoginResponse, User } from "modules/Auth/types";
-import { createAction } from "typesafe-actions";
+import { createAction, createAsyncAction } from "typesafe-actions";
 
 export const login = {
     request: createAction("@auth/LOGIN_REQUEST")<Credentials>(),

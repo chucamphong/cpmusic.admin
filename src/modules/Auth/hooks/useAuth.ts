@@ -1,8 +1,8 @@
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "store/types";
-import useSelector from "store/hooks/useSelector";
 import isEqual from "lodash/isEqual";
 import { actions } from "modules/Auth";
+import { useDispatch } from "react-redux";
+import useSelector from "store/hooks/useSelector";
+import { AppDispatch } from "store/types";
 
 const useAuth = () => {
     const dispatch = useDispatch<AppDispatch>();
