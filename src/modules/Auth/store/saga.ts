@@ -1,6 +1,5 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { actions } from "modules/Auth";
-import { LoginFailedResponse, LoginResponse, User } from "modules/Auth/types";
+import { actions, LoginFailedResponse, LoginResponse, User } from "modules/Auth";
 import { actions as loadingActions } from "modules/Loading";
 import { all, call, fork, put, take } from "redux-saga/effects";
 import authService from "services/authService";

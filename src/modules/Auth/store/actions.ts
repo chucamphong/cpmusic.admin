@@ -1,4 +1,4 @@
-import { Credentials, LoginFailedResponse, LoginResponse, User } from "modules/Auth/types";
+import { Credentials, LoginFailedResponse, LoginResponse, User } from "modules/Auth";
 import { createAction, createAsyncAction } from "typesafe-actions";
 
 export const login = {
