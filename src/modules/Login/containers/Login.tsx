@@ -4,7 +4,7 @@ import FullHeightScreen from "modules/Common/components/FullHeightScreen";
 import { FieldData, Rules } from "modules/Login/types";
 import React, { useEffect, useState } from "react";
 import useSelector from "store/hooks/useSelector";
-import { isDevelopment } from "utils/helpers";
+// import { isDevelopment } from "utils/helpers";
 
 const initialValues = {};
 
