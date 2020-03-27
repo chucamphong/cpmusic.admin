@@ -7,7 +7,7 @@ type State = {
 };
 
 const initialState: State = {
-    status: "nothing"
+    status: "nothing",
 };
 
 type LoadingReducer = Reducer<Readonly<State>, ActionType<typeof actions>>;

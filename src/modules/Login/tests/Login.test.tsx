@@ -18,8 +18,8 @@ describe("Kiểm tra trang đăng nhập", () => {
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--proxy-server='direct://'",
-            "--proxy-bypass-list=*"
-        ]
+            "--proxy-bypass-list=*",
+        ],
     };
 
     beforeAll(async () => {
@@ -29,7 +29,7 @@ describe("Kiểm tra trang đăng nhập", () => {
     beforeEach(async () => {
         page = await browser.newPage();
         await page.goto("http://localhost:3000", {
-            waitUntil: "domcontentloaded"
+            waitUntil: "domcontentloaded",
         });
     });
 
@@ -43,7 +43,7 @@ describe("Kiểm tra trang đăng nhập", () => {
 
     async function getInnerText(className: string) {
         await page.waitForSelector(className, {
-            visible: true
+            visible: true,
         });
         const element = await page.$(className);
         return await page.evaluate(e => e?.innerText, element);

@@ -12,7 +12,7 @@ import "./mocks/window.matchMedia";
 
 const initialState: RootState = {
     auth: {},
-    loading: { status: "nothing" }
+    loading: { status: "nothing" },
 };
 const mockStore = (state: RootState = initialState) => configureStore()(state);
 
@@ -24,7 +24,7 @@ describe("Kiểm tra AppContainer", () => {
                 <MemoryRouter>
                     <App />
                 </MemoryRouter>
-            </Provider>
+            </Provider>,
         );
 
         expect(document.title).toEqual("Đăng nhập");
@@ -38,7 +38,7 @@ describe("Kiểm tra AppContainer", () => {
                         <App />
                     </ThemeProvider>
                 </MemoryRouter>
-            </Provider>
+            </Provider>,
         );
 
         expect(document.title).toEqual("Trang chủ");
@@ -53,7 +53,7 @@ describe("Kiểm tra AppContainer", () => {
                         <App />
                     </ThemeProvider>
                 </MemoryRouter>
-            </Provider>
+            </Provider>,
         );
 
         expect(document.title).toEqual("Đăng nhập");

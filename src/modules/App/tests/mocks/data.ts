@@ -10,12 +10,12 @@ const data: RootState = {
             email: faker.internet.email(),
             role: "mod",
             email_verified_at: Date.now().toString(),
-            permissions: []
-        }
+            permissions: [],
+        },
     },
     loading: {
-        status: "nothing"
-    }
+        status: "nothing",
+    },
 };
 
 export default data;

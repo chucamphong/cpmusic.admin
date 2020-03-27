@@ -10,11 +10,11 @@ const MyTheme: DefaultTheme = {
         xxl: "1600px",
     },
     sider: {
-        width: "200px"
+        width: "200px",
     },
     content: {
-        margin: "20px"
-    }
+        margin: "20px",
+    },
 };
 
 export default MyTheme;

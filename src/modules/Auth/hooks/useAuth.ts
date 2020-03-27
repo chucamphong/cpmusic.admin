@@ -30,7 +30,7 @@ const useAuth = () => {
         logout,
         isAuthenticated,
         refresh,
-        user
+        user,
     };
 };
 

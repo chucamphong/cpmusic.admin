@@ -27,7 +27,7 @@ const axiosInstance = axios.create({
         "X-Requested-With": "XMLHttpRequest",
     },
     transformRequest: [transformRequest, ...axios.defaults.transformRequest as AxiosTransformer[]],
-    transformResponse: [transformResponse, ...axios.defaults.transformResponse as AxiosTransformer[]]
+    transformResponse: [transformResponse, ...axios.defaults.transformResponse as AxiosTransformer[]],
 });
 
 export const CancelToken = axios.CancelToken;

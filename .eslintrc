@@ -9,14 +9,11 @@
     "plugins": [
         "react-hooks"
     ],
-    "settings": {
-        "react": {
-            "createClass": "createReactClass",
-            "pragma": "React",
-            "version": "detect"
-        }
-    },
     "rules": {
+        "comma-dangle": [
+            "error",
+            "always-multiline"
+        ],
         "indent": [
             "error",
             4,
@@ -24,16 +21,23 @@
                 "SwitchCase": 1
             }
         ],
-        "semi": "error",
+        "jsx-quotes": [
+            "error",
+            "prefer-double"
+        ],
         "quotes": [
             "error",
             "double"
         ],
-        "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
-        "jsx-quotes": [
-            "error",
-            "prefer-double"
-        ]
+        "react-hooks/rules-of-hooks": "error",
+        "semi": "error"
+    },
+    "settings": {
+        "react": {
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "version": "detect"
+        }
     }
 }

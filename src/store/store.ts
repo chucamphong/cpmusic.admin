@@ -14,10 +14,10 @@ const store = createStore(
     rootReducer,
     {
         auth: {
-            plainTextToken: localStorage.getItem("plainTextToken")?.toString()
-        }
+            plainTextToken: localStorage.getItem("plainTextToken")?.toString(),
+        },
     },
-    enhancer
+    enhancer,
 );
 
 sagaMiddleware.run(rootSaga);

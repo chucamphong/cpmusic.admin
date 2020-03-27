@@ -17,5 +17,5 @@ function logout() {
 export default {
     login,
     logout,
-    me
+    me,
 };

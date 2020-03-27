@@ -26,7 +26,7 @@ export function* login() {
 
             const data = error.response?.data ?? {
                 message: "Không thể kết nối máy chủ",
-                errors: {}
+                errors: {},
             };
 
             yield put(actions.login.failure(data));

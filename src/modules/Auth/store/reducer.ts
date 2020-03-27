@@ -12,7 +12,7 @@ const authReducer: AuthReducer = (state = {}, action) => {
                 break;
             case "@auth/LOGIN_SUCCESS":
                 return {
-                    plainTextToken: action.payload.plainTextToken
+                    plainTextToken: action.payload.plainTextToken,
                 };
             case "@auth/LOGIN_FAILURE":
                 return {
@@ -29,8 +29,8 @@ const authReducer: AuthReducer = (state = {}, action) => {
                     message: action.payload.message,
                     errors: {
                         email: [],
-                        password: []
-                    }
+                        password: [],
+                    },
                 };
             case "@auth/LOGOUT_SUCCESS":
                 return {};
