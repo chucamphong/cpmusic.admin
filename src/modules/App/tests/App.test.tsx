@@ -17,11 +17,10 @@ const initialState: RootState = {
 const mockStore = (state: RootState = initialState) => configureStore()(state);
 
 describe("Kiểm tra AppContainer", () => {
-    test("Dẫn đến trang đăng nhập nếu chưa đăng nhập", () => {
-        const store = mockStore();
 
+    test("Dẫn đến trang đăng nhập nếu chưa đăng nhập", () => {
         render(
-            <Provider store={store}>
+            <Provider store={mockStore()}>
                 <MemoryRouter>
                     <App />
                 </MemoryRouter>

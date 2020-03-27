@@ -21,9 +21,6 @@ const rules: Rules = {
     }, {
         type: "email",
         message: "Địa chỉ email không hợp lệ."
-    }, {
-        max: 255,
-        message: "Địa chỉ email tối đa 255 ký tự."
     }],
     // Kiểm tra tính hợp lệ của password
     password: [{
@@ -31,10 +28,7 @@ const rules: Rules = {
         message: "Mật khẩu không được để trống."
     }, {
         min: 8,
-        message: "Mật khẩu tối thiếu có 8 ký tự."
-    }, {
-        max: 255,
-        message: "Mật khẩu tối đa 255 ký tự."
+        message: "Mật khẩu tối thiểu có 8 ký tự."
     }]
 };
 
@@ -76,11 +70,11 @@ const LoginContainer: React.FC = () => {
                         <Form.Item validateStatus={errors?.email ? "error" : "validating"}
                             help={errors?.email?.toString()}
                             name="email" rules={rules.email}>
-                            <Input placeholder="Nhập địa chỉ email của bạn" />
+                            <Input placeholder="Nhập địa chỉ email của bạn" maxLength={255} />
                         </Form.Item>
                         <Form.Item validateStatus={errors?.password ? "error" : "validating"}
                             help={errors?.password?.toString()} name="password" rules={rules.password}>
-                            <Input.Password placeholder="Nhập mật khẩu của bạn" />
+                            <Input.Password placeholder="Nhập mật khẩu của bạn" maxLength={255} />
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit" disabled={loading} loading={loading} block>

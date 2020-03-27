@@ -1,4 +1,7 @@
 {
+    "env": {
+        "jest": true
+    },
     "extends": [
         "react-app",
         "plugin:jsx-a11y/recommended"
