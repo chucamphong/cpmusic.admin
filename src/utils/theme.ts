@@ -16,5 +16,4 @@ const MyTheme: DefaultTheme = {
         margin: "20px",
     },
 };
-
 export default MyTheme;
