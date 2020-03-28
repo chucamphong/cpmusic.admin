@@ -1,103 +1,126 @@
-import puppeteer, { Browser, ChromeArgOptions, Page } from "puppeteer";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import App from "modules/App/containers/App";
+import React from "react";
+import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
+import store from "store/store";
+import { ThemeProvider } from "styled-components";
+import "tests/mocks/window.matchMedia";
+import theme from "utils/theme";
 
-describe("Kiểm tra trang đăng nhập", () => {
-    let browser: Browser;
-    let page: Page;
-    const options: ChromeArgOptions = {
-        args: [
-            "--disable-canvas-aa",
-            "--disable-2d-canvas-clip-aa",
-            "--disable-gl-drawing-for-tests",
-            "--use-gl=swiftshader",
-            "--enable-webgl",
-            "--hide-scrollbars",
-            "--mute-audio",
-            "--no-first-run",
-            "--disable-infobars",
-            "--disable-breakpad",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--proxy-server='direct://'",
-            "--proxy-bypass-list=*",
-        ],
-    };
+function change(element: Element | Node | Document | Window, value: string) {
+    fireEvent.change(element, { target: { value } });
+}
 
-    beforeAll(async () => {
-        browser = await puppeteer.launch(options);
+function getInputEmail() {
+    return screen.getByPlaceholderText("Nhập địa chỉ email của bạn");
+}
+
+function getInputPassword() {
+    return screen.getByPlaceholderText("Nhập mật khẩu của bạn");
+}
+
+function submitForm() {
+    fireEvent.click(screen.getByRole("button"));
+}
+
+describe("Kiểm tra AppContainer", () => {
+    let consoleWarnSpy: jest.SpyInstance;
+
+    beforeAll(() => {
+        consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
     });
 
-    beforeEach(async () => {
-        page = await browser.newPage();
-        await page.goto("http://localhost:3000", {
-            waitUntil: "domcontentloaded",
-        });
+    beforeEach(() => {
+        render(
+            <Provider store={store}>
+                <MemoryRouter>
+                    <ThemeProvider theme={theme}>
+                        <App />
+                    </ThemeProvider>
+                </MemoryRouter>
+            </Provider>,
+        );
     });
 
-    afterEach(async () => {
-        await page.close();
+    afterEach(() => {
+        cleanup();
+        consoleWarnSpy.mockReset();
     });
 
-    afterAll(async () => {
-        await browser.close();
+    afterAll(() => {
+        consoleWarnSpy.mockRestore();
     });
 
-    async function getInnerText(className: string) {
-        await page.waitForSelector(className, {
-            visible: true,
-        });
-        const element = await page.$(className);
-        return await page.evaluate(e => e?.innerText, element);
-    }
+    test("Báo lỗi nếu địa chỉ email để trống.", async () => {
+        submitForm();
 
-    /**
-     * Thực hiện điền dữ liệu vào form và submit form
-     * @param email
-     * @param password
-     */
-    async function fillFormAndSubmit(email: string, password: string) {
-        await page.type("#email", email);
-        await page.type("#password", password);
-        await page.click("button[type=submit]");
-    }
+        const error = await screen.findByText("Địa chỉ email không được để trống");
+
+        expect(error).toBeInTheDocument();
+    });
+
+    test("Báo lỗi nếu mật khẩu để trống.", async () => {
+        submitForm();
+
+        const error = await screen.findByText("Mật khẩu không được để trống");
+
+        expect(error).toBeInTheDocument();
+    });
+
+    test("Báo lỗi nếu địa chỉ email và mật khẩu để trống", async () => {
+        submitForm();
+
+        const emailError = await screen.findByText("Địa chỉ email không được để trống");
+        const passwordError = await screen.findByText("Mật khẩu không được để trống");
+
+        expect(emailError).toBeInTheDocument();
+        expect(passwordError).toBeInTheDocument();
+    });
 
     test.each([
-        ["", "", "Địa chỉ email không được để trống.", "Mật khẩu không được để trống."],
-        ["test", "test", "Địa chỉ email không hợp lệ.", "Mật khẩu tối thiểu có 8 ký tự."],
-    ])("Báo lỗi khi email = \"%s\" và mật khẩu = \"%s\"", async (email, password, email_error, password_error) => {
-        // Thực hiện nhập dữ liệu và nhấn nút đăng nhập
-        await fillFormAndSubmit(email, password);
+        ["abc.@gmail.com"],
+        ["xyz@gmail!com"],
+    ])("Báo lỗi nếu địa chỉ email %s không hợp lệ", async (email) => {
+        change(getInputEmail(), email);
 
-        // Chờ xuất hiện class ant-form-item-explain
-        await page.waitForSelector(".ant-form-item-explain");
-        // Sửa lỗi đôi khi trình duyệt không kịp render nên sẽ dẫn đến thiếu dòng báo lỗi của mật khẩu
-        await page.waitForSelector(".ant-form-item-explain");
+        const error = await screen.findByText("Địa chỉ email không hợp lệ");
 
-        // Lấy các div có class ant-form-item-explain
-        const errors = await page.$$(".ant-form-item-explain");
-        // Lấy dòng báo lỗi của email
-        const emailError = await page.evaluate(e => e?.innerText, errors[0]);
-        // Lấy dòng báo lỗi của password
-        const passwordError = await page.evaluate(e => e?.innerText, errors[1]);
-
-        // Xác nhận lại các dòng báo lỗi
-        expect(emailError).toEqual(email_error);
-        expect(passwordError).toEqual(password_error);
+        expect(error).toBeInTheDocument();
     });
 
-    test("Hiện thông báo \"Dữ liệu không hợp lệ.\" khi đăng nhập thất bại", async () => {
-        await fillFormAndSubmit("chucamphong1@gmail.com", "password1");
+    test.each([
+        ["1234567"],
+        ["0123456"],
+        ["...♫♫♫"],
+    ])("Báo lỗi nếu mật khẩu %s không hợp lệ", async (password) => {
+        change(getInputPassword(), password);
 
-        const emailError = await getInnerText(".ant-form-item-explain");
-        const message = await getInnerText(".ant-notification-notice-message");
+        const error = await screen.findByText("Mật khẩu tối thiểu có 8 ký tự");
 
-        expect(emailError).toEqual("Không tìm thấy tài khoản trùng khớp.");
-        expect(message).toEqual("Dữ liệu không hợp lệ.");
+        expect(error).toBeInTheDocument();
     });
 
-    test("Hiện thông báo \"Đăng nhập thành công\" khi đăng nhập thành công", async () => {
-        await fillFormAndSubmit("chucamphong@gmail.com", "password");
+    test("Hiện thông báo \"Dữ liệu không hợp lệ\" nếu đăng nhập thất bại", async () => {
+        change(getInputEmail(), "abc@gmail.com");
+        change(getInputPassword(), "password");
+        submitForm();
 
-        const message = await getInnerText(".ant-notification-notice-message");
-        expect(message).toEqual("Đăng nhập thành công");
+        const error = await screen.findByText("Không tìm thấy tài khoản trùng khớp.");
+        const message = await screen.findByText("Dữ liệu không hợp lệ.");
+
+        expect(error).toBeInTheDocument();
+        expect(message).toBeInTheDocument();
+    });
+
+    test("Hiện thông báo \"Đăng nhập thành công\" nếu đăng nhập thành công", async () => {
+        change(getInputEmail(), "chucamphong@gmail.com");
+        change(getInputPassword(), "password");
+        submitForm();
+
+        const message = await screen.findByText("Đăng nhập thành công");
+
+        expect(message).toBeInTheDocument();
     });
 });
+

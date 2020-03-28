@@ -1,7 +1,7 @@
 import faker from "faker";
 import { RootState } from "store/types";
 
-const data: RootState = {
+const state: RootState = {
     auth: {
         plainTextToken: faker.random.words(32),
         user: {
@@ -18,4 +18,4 @@ const data: RootState = {
     },
 };
 
-export default data;
+export default state;

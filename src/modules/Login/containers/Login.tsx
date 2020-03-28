@@ -17,18 +17,18 @@ const rules: Rules = {
     // Kiểm tra tính hợp lệ của username
     email: [{
         required: true,
-        message: "Địa chỉ email không được để trống.",
+        message: "Địa chỉ email không được để trống",
     }, {
         type: "email",
-        message: "Địa chỉ email không hợp lệ.",
+        message: "Địa chỉ email không hợp lệ",
     }],
     // Kiểm tra tính hợp lệ của password
     password: [{
         required: true,
-        message: "Mật khẩu không được để trống.",
+        message: "Mật khẩu không được để trống",
     }, {
         min: 8,
-        message: "Mật khẩu tối thiểu có 8 ký tự.",
+        message: "Mật khẩu tối thiểu có 8 ký tự",
     }],
 };
 
