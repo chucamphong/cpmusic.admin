@@ -25,12 +25,19 @@ const useAuth = () => {
         dispatch(actions.me.request());
     }
 
+    function hasRole(role: string): boolean {
+        if (!isAuthenticated()) return false;
+
+        return user?.role === role;
+    }
+
     return {
         login,
         logout,
         isAuthenticated,
         refresh,
         user,
+        hasRole,
     };
 };
 
