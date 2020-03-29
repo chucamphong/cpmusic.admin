@@ -4,14 +4,15 @@ import FullHeightScreen from "modules/Common/components/FullHeightScreen";
 import { FieldData, Rules } from "modules/Login/types";
 import React, { useEffect, useState } from "react";
 import useSelector from "store/hooks/useSelector";
-// import { isDevelopment } from "utils/helpers";
+import { isDevelopment } from "utils/helpers";
 
-const initialValues = {};
-
-// const initialValues = isDevelopment() ? {
-//     "email": "chucamphong@gmail.com",
-//     "password": "password"
-// } : {};
+/**
+ * Tạo bộ dữ liệu mẫu phục vụ cho môi trường lập trình
+ */
+const initialValues = isDevelopment() ? {
+    "email": "chucamphong@gmail.com",
+    "password": "password",
+} : {};
 
 const rules: Rules = {
     // Kiểm tra tính hợp lệ của username
@@ -78,7 +79,7 @@ const LoginContainer: React.FC = () => {
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit" disabled={loading} loading={loading} block>
-                            Đăng Nhập
+                                Đăng Nhập
                             </Button>
                         </Form.Item>
                     </Form>

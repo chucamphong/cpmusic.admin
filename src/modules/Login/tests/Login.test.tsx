@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import store from "store/store";
 import { ThemeProvider } from "styled-components";
-import "tests/mocks/window.matchMedia";
+import { noop } from "utils/helpers";
 import theme from "utils/theme";
 
 function change(element: Element | Node | Document | Window, value: string) {
@@ -25,10 +25,8 @@ function submitForm() {
 }
 
 describe("Kiểm tra AppContainer", () => {
-    let consoleWarnSpy: jest.SpyInstance;
-
     beforeAll(() => {
-        consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+        jest.spyOn(console, "warn").mockImplementation(noop);
     });
 
     beforeEach(() => {
@@ -43,14 +41,7 @@ describe("Kiểm tra AppContainer", () => {
         );
     });
 
-    afterEach(() => {
-        cleanup();
-        consoleWarnSpy.mockReset();
-    });
-
-    afterAll(() => {
-        consoleWarnSpy.mockRestore();
-    });
+    afterEach(cleanup);
 
     test("Báo lỗi nếu địa chỉ email để trống.", async () => {
         submitForm();
@@ -92,7 +83,7 @@ describe("Kiểm tra AppContainer", () => {
     test.each([
         ["1234567"],
         ["0123456"],
-        ["...♫♫♫"],
+        ["►¶0♫♫♫"],
     ])("Báo lỗi nếu mật khẩu %s không hợp lệ", async (password) => {
         change(getInputPassword(), password);
 
@@ -123,4 +114,3 @@ describe("Kiểm tra AppContainer", () => {
         expect(message).toBeInTheDocument();
     });
 });
-
