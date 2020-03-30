@@ -14,6 +14,9 @@ const initialValues = isDevelopment() ? {
     "password": "password",
 } : {};
 
+/**
+ * Tạo bộ quy tắc để kiểm tra dữ liệu khi nhập form
+ */
 const rules: Rules = {
     // Kiểm tra tính hợp lệ của username
     email: [{
@@ -33,17 +36,23 @@ const rules: Rules = {
     }],
 };
 
+/**
+ * Trang đăng nhập
+ * @constructor
+ */
 const LoginContainer: React.FC = () => {
     const auth = useAuth();
-    const [loading, setLoading] = useState(false);
+    const [loading, showLoading] = useState(false);
     const status = useSelector(state => state.auth.status);
     const message = useSelector(state => state.auth.message);
     const errors = useSelector(state => state.auth.errors);
 
-    document.title = "Đăng nhập";
+    useEffect(() => {
+        document.title = "Đăng nhập";
+    }, []);
 
     useEffect(() => {
-        setLoading(status === "pending");
+        showLoading(status === "pending");
 
         if (status === "success" || status === "error") {
             notification.destroy();
@@ -51,6 +60,10 @@ const LoginContainer: React.FC = () => {
             notification.open({
                 type: status,
                 message: message ?? "Đăng nhập thành công",
+                style: {
+                    // Căn giữa trên màn hình di động
+                    right: -8,
+                },
             });
         }
     }, [status, message]);
