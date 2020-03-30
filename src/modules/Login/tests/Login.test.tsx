@@ -8,23 +8,17 @@ import { ThemeProvider } from "styled-components";
 import { noop } from "utils/helpers";
 import theme from "utils/theme";
 
-function change(element: Element | Node | Document | Window, value: string) {
+const change = (element: Element | Node | Document | Window, value: string) => {
     fireEvent.change(element, { target: { value } });
-}
+};
 
-function getInputEmail() {
-    return screen.getByPlaceholderText("Nhập địa chỉ email của bạn");
-}
+const getInputEmail = () => screen.getByPlaceholderText("Nhập địa chỉ email của bạn");
 
-function getInputPassword() {
-    return screen.getByPlaceholderText("Nhập mật khẩu của bạn");
-}
+const getInputPassword = () => screen.getByPlaceholderText("Nhập mật khẩu của bạn");
 
-function submitForm() {
-    fireEvent.click(screen.getByRole("button"));
-}
+const submitForm = () => fireEvent.click(screen.getByRole("button"));
 
-describe("Kiểm tra AppContainer", () => {
+describe("Kiểm tra trang đăng nhập", () => {
     beforeAll(() => {
         jest.spyOn(console, "warn").mockImplementation(noop);
     });
