@@ -10,7 +10,7 @@ const MyTheme: DefaultTheme = {
         xxl: "1600px",
     },
     sider: {
-        width: "200px",
+        width: "240px",
     },
     content: {
         margin: "20px",
