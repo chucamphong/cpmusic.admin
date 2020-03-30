@@ -1,9 +1,9 @@
-import { render as reactRender, cleanup } from "@testing-library/react";
+import { cleanup, render as reactRender } from "@testing-library/react";
 import App from "modules/App/containers/App";
 import React from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import configureStore from "redux-mock-store";
+import configureStore, { MockStoreEnhanced } from "redux-mock-store";
 import { RootState } from "store/types";
 import { ThemeProvider } from "styled-components";
 import "tests/mocks/window.matchMedia";
@@ -14,13 +14,13 @@ const initialState: RootState = {
     auth: {},
     loading: { status: "nothing" },
 };
-const mockStore = (state: RootState = initialState) => configureStore()(state);
+const mockStore = (state: RootState = initialState) => configureStore<RootState>()(state);
 
 describe("Kiểm tra AppContainer", () => {
-    function render(store) {
+    function render(store: MockStoreEnhanced, url: string = "/") {
         reactRender(
             <Provider store={store}>
-                <MemoryRouter>
+                <MemoryRouter initialEntries={[url]}>
                     <ThemeProvider theme={theme}>
                         <App />
                     </ThemeProvider>
@@ -57,6 +57,12 @@ describe("Kiểm tra AppContainer", () => {
         render(store);
 
         expect(document.title).toEqual("Đăng nhập");
+    });
+
+    test("Nhập url /users và dẫn ra chính xác url đó", async () => {
+        render(mockStore(state), "/users");
+
+        expect(document.title).toMatch(/Quản lý thành viên/i);
     });
 });
 

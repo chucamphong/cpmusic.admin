@@ -1,16 +1,32 @@
-import { useAuth } from "modules/Auth";
-import DashBoardContainer from "modules/Dashboard/containers/DashBoard";
-import LoadingContainer from "modules/Loading/containers/Loading";
-import LoginContainer from "modules/Login/containers/Login";
+import ErrorPage from "modules/App/components/Error";
+import HomePage from "modules/Home/containers/Home";
+import Loading from "modules/Loading/containers/Loading";
+import LoginPage from "modules/Login/containers/Login";
+import { GuestRoute, ProtectedRoute } from "modules/Route";
+import UserPage from "modules/User/containers/User";
 import React, { Fragment } from "react";
+import { Route, Switch } from "react-router-dom";
 
 const AppContainer: React.FC = () => {
-    const auth = useAuth();
-
     return (
         <Fragment>
-            <LoadingContainer />
-            {auth.isAuthenticated() && !auth.hasRole("member") ? <DashBoardContainer /> : <LoginContainer />}
+            <Loading />
+            <Switch>
+                {/* Trang chủ */}
+                <ProtectedRoute path={"/"} exact>
+                    <HomePage />
+                </ProtectedRoute>
+                {/* Quản lý thành viên */}
+                <ProtectedRoute path={"/users"}>
+                    <UserPage />
+                </ProtectedRoute>
+                {/* Đăng nhập */}
+                <GuestRoute path={"/dang-nhap"}>
+                    <LoginPage />
+                </GuestRoute>
+                {/* Trang báo lỗi nếu url không tồn tại*/}
+                <Route path={"*"} component={ErrorPage} />
+            </Switch>
         </Fragment>
     );
 };

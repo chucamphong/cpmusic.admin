@@ -1,15 +1,17 @@
 import { Layout } from "antd";
 import { BasicProps } from "antd/es/layout/layout";
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 type Props = {
-    justify?: boolean;
+    textAlign?: "justify" | "center";
     margin?: number;
 } & BasicProps;
 
-const Content: React.FC<Props> = styled(({ justify, ...rest }: Props) => <Layout.Content {...rest} />)`
-    text-align: ${({ justify }) => justify ? "justify" : "auto"};
+const Content: React.FC<Props> = styled(({ textAlign, ...rest }: Props) => <Layout.Content {...rest} />)`
+    ${({ textAlign }) => textAlign && css`
+        text-align: ${textAlign};
+    `};
     margin: ${({ margin, theme }) => margin ? `${margin}px` : theme.content.margin};
 `;
 

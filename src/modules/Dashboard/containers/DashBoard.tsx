@@ -6,22 +6,20 @@ import Layout from "modules/Common/components/Layout";
 import Logo from "modules/Dashboard/components/Logo";
 import Overlay from "modules/Dashboard/components/Overlay";
 import StyledMenuOutlined from "modules/Dashboard/components/StyledMenuOutlined";
-import { ProtectedRoute } from "modules/Route";
 import React, { MouseEvent, useEffect, useState } from "react";
-import { Link, Switch, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { useMedia } from "react-use";
 import MyTheme from "utils/theme";
 
 const siderWidth = MyTheme.sider.width;
 
-const DashBoardContainer: React.FC = () => {
+const DashBoardContainer: React.FC = ({ children }) => {
     const auth = useAuth();
     const location = useLocation();
+    const history = useHistory();
     const [collapsed, setCollapsed] = useState<boolean>(true);
     const isMobile = useMedia("(max-width: 576px");
     const toggleSider = () => setCollapsed(!collapsed);
-
-    document.title = "Trang chủ";
 
     useEffect(() => {
         setCollapsed(isMobile);
@@ -31,6 +29,7 @@ const DashBoardContainer: React.FC = () => {
         const logout = (e: MouseEvent) => {
             e.preventDefault();
             auth.logout();
+            history.push("/");
         };
 
         return (
@@ -52,7 +51,7 @@ const DashBoardContainer: React.FC = () => {
                 <Logo>
                     <Link to="/">CPMusic</Link>
                 </Logo>
-                <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]}>
+                <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} selectedKeys={[location.pathname]}>
                     <Menu.Item key="/">
                         <HomeOutlined />
                         <Link to="/">
@@ -85,15 +84,8 @@ const DashBoardContainer: React.FC = () => {
                         </Avatar>
                     </Dropdown>
                 </Layout.Header>
-                <Layout.Content margin={20} justify>
-                    <Switch>
-                        <ProtectedRoute exact path={"/"}>
-                            <h1>Index page</h1>
-                        </ProtectedRoute>
-                        <ProtectedRoute path={"/users"}>
-                            <h1>Users page</h1>
-                        </ProtectedRoute>
-                    </Switch>
+                <Layout.Content margin={20} textAlign={"justify"}>
+                    {children}
                 </Layout.Content>
             </Layout>
         </Layout>
