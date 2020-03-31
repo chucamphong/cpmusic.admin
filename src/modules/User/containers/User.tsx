@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 
 const User = () => {
     useEffect(() => {
-        document.title = "Quản Lý Thành Viên";
-    });
+        document.title = "Quản lý thành viên";
+    }, []);
 
     return (
         <h1>User Container</h1>
