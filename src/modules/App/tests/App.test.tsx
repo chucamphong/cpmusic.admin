@@ -59,10 +59,16 @@ describe("Kiểm tra AppContainer", () => {
         expect(document.title).toEqual("Đăng nhập");
     });
 
-    test("Nhập url /users và dẫn ra chính xác url đó", async () => {
-        render(mockStore(state), "/users");
+    test("Nhập url /users và dẫn ra chính xác url đó", () => {
+        render(mockStore(state), "/thanh-vien");
 
         expect(document.title).toMatch(/Quản lý thành viên/i);
+    });
+
+    test("Nhập link bậy bạ sẽ hiện trang không tìm thấy url", () => {
+        render(mockStore(state), "/abcxyz");
+
+        expect(document.title).toEqual("Không tìm thấy trang bạn yêu cầu");
     });
 });
 

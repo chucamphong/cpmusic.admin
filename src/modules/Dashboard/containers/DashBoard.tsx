@@ -7,18 +7,22 @@ import Logo from "modules/Dashboard/components/Logo";
 import Overlay from "modules/Dashboard/components/Overlay";
 import StyledMenuOutlined from "modules/Dashboard/components/StyledMenuOutlined";
 import React, { MouseEvent, useEffect, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useMedia } from "react-use";
 import MyTheme from "utils/theme";
 
 const siderWidth = MyTheme.sider.width;
 
+/**
+ * Layout Dashboard
+ * @param children
+ * @constructor
+ */
 const DashBoardContainer: React.FC = ({ children }) => {
     const auth = useAuth();
     const location = useLocation();
-    const history = useHistory();
-    const [collapsed, setCollapsed] = useState<boolean>(true);
-    const isMobile = useMedia("(max-width: 576px");
+    const [collapsed, setCollapsed] = useState(true);
+    const isMobile = useMedia(`(max-width: ${MyTheme.layout.sm})`);
     const toggleSider = () => setCollapsed(!collapsed);
 
     useEffect(() => {
@@ -29,7 +33,6 @@ const DashBoardContainer: React.FC = ({ children }) => {
         const logout = (e: MouseEvent) => {
             e.preventDefault();
             auth.logout();
-            history.push("/");
         };
 
         return (
@@ -51,16 +54,16 @@ const DashBoardContainer: React.FC = ({ children }) => {
                 <Logo>
                     <Link to="/">CPMusic</Link>
                 </Logo>
-                <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} selectedKeys={[location.pathname]}>
-                    <Menu.Item key="/">
+                <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]}>
+                    <Menu.Item key="/" title={null}>
                         <HomeOutlined />
                         <Link to="/">
                             <span>Trang chủ</span>
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="/users">
+                    <Menu.Item key="/thanh-vien" title={null}>
                         <UserOutlined />
-                        <Link to="/users">
+                        <Link to="/thanh-vien">
                             <span>Thành viên</span>
                         </Link>
                     </Menu.Item>
