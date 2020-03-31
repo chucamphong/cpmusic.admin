@@ -1,4 +1,4 @@
-import ErrorPage from "modules/App/components/Error";
+import ErrorPage from "modules/Error/containers/Error";
 import HomePage from "modules/Home/containers/Home";
 import Loading from "modules/Loading/containers/Loading";
 import LoginPage from "modules/Login/containers/Login";
