@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse, AxiosStatic } from "pages/Login/tests/__mocks__/axios";
+import { AxiosError, AxiosResponse, AxiosStatic } from "axios";
 import { Credentials, LoginFailedResponse, LoginResponse, User } from "modules/Auth";
 
 const Axios: jest.Mocked<AxiosStatic> = jest.genMockFromModule("axios");
