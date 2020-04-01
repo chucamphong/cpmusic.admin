@@ -4,7 +4,7 @@ import Layout from "modules/Common/components/Layout";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const Error: React.FC = () => {
+const NoMatch: React.FC = () => {
     useEffect(() => {
         document.title = "Không tìm thấy trang bạn yêu cầu";
     }, []);
@@ -23,4 +23,4 @@ const Error: React.FC = () => {
     );
 };
 
-export default Error;
+export default NoMatch;

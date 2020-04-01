@@ -1,5 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import ErrorPage from "modules/Error/containers/Error";
+import NoMatch from "pages/Error/NoMatch";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
@@ -10,7 +10,7 @@ describe("Kiểm tra trang báo lỗi", () => {
         render(
             <MemoryRouter>
                 <ThemeProvider theme={theme}>
-                    <ErrorPage />
+                    <NoMatch />
                 </ThemeProvider>
             </MemoryRouter>,
         );

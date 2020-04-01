@@ -3,21 +3,13 @@ import App from "modules/App/containers/App";
 import React from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import configureStore, { MockStoreEnhanced } from "redux-mock-store";
-import { RootState } from "store/types";
 import { ThemeProvider } from "styled-components";
+import mockStore, { mockState as state } from "tests/mocks/store";
 import "tests/mocks/window.matchMedia";
 import theme from "utils/theme";
-import state from "./faker/state";
-
-const initialState: RootState = {
-    auth: {},
-    loading: { status: "nothing" },
-};
-const mockStore = (state: RootState = initialState) => configureStore<RootState>()(state);
 
 describe("Kiểm tra AppContainer", () => {
-    function render(store: MockStoreEnhanced, url: string = "/") {
+    function render(store: ReturnType<typeof mockStore>, url: string = "/") {
         reactRender(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[url]}>

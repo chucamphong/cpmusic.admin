@@ -1,9 +1,9 @@
-import ErrorPage from "modules/Error/containers/Error";
-import HomePage from "modules/Home/containers/Home";
 import Loading from "modules/Loading/containers/Loading";
-import LoginPage from "modules/Login/containers/Login";
 import { GuestRoute, ProtectedRoute } from "modules/Route";
-import UserPage from "modules/User/containers/User";
+import NoMatch from "pages/Error/NoMatch";
+import HomePage from "pages/Home";
+import LoginPage from "pages/Login";
+import UserPage from "pages/User";
 import React, { Fragment } from "react";
 import { Route, Switch } from "react-router-dom";
 
@@ -25,7 +25,7 @@ const AppContainer: React.FC = () => {
                     <LoginPage />
                 </GuestRoute>
                 {/* Trang báo lỗi nếu url không tồn tại*/}
-                <Route path={"*"} component={ErrorPage} />
+                <Route path={"*"} component={NoMatch} />
             </Switch>
         </Fragment>
     );
