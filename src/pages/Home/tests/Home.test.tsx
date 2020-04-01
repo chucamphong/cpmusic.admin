@@ -19,7 +19,7 @@ describe("Kiểm tra trang chủ", () => {
                     </ThemeProvider>
                 </MemoryRouter>
             </Provider>,
-        )
+        );
     });
 
     afterEach(cleanup);
