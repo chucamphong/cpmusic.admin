@@ -1,11 +1,12 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, notification, PageHeader, Select, Space, Table, Tag } from "antd";
 import { ColumnProps } from "antd/es/table";
-import debounce from "lodash/debounce";
+import { TablePaginationConfig } from "antd/lib/table/interface";
+import { AxiosResponse } from "axios";
 import { User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import { UserList } from "pages/User/types";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService from "services/usersService";
 
@@ -54,53 +55,46 @@ const UserPage: React.FC = () => {
     const history = useHistory();
     const ability = useContext(AbilityContext);
 
-    // Lưu danh sách tài khoản để hiển thị lên table
-    const [usersTable, setUsersTable] = useState<UserList>();
-    // Lưu trạng thái của thanh loading hiện/ẩn
-    const [loading, setLoading] = useState(false);
-    // Lưu giá trị tìm kiếm
-    const [searchValue, setSearchValue] = useState<string>();
-    // Lưu cột để phục vụ cho việc tìm kiếm
-    const [selected, setSelectedValue] = useState<string>("name");
+    const [usersTable, setUsersTable] = useState<UserList>([]);
+    const [loading, showLoading] = useState(false);
+    const [searchValue, setSearchValue] = useState("");
+    const [column, setColumn] = useState("name");
+    const [pagination, setPagination] = useState<TablePaginationConfig>({
+        current: 1,
+        pageSize: 10,
+        showSizeChanger: false,
+    });
 
     // Quay trở lại trang trước đó
     const goBack = () => history.goBack();
 
-    // Gửi request để lấy dữ liệu
-    const request = async (url: string) => {
+    // Thực hiện lấy danh sách tài khoản thỏa mãn query
+    const fetchUsers = async <T extends any>(query: string, callback: (response: AxiosResponse<T>) => void) => {
         try {
-            setLoading(true);
-            const response = await usersService.fetch(url);
-            setUsersTable(response.data);
-        } catch (e) {
+            showLoading(true);
+            const response = await usersService.fetch(`/users?${query}`);
+            setUsersTable(response.data.data);
+            callback(response);
+        } catch (error) {
             notification.error({
-                message: "Truy vấn thất bại",
+                message: error.message,
             });
         } finally {
-            setLoading(false);
+            showLoading(false);
         }
     };
 
-    // Lấy danh sách tài khoản người dùng
-    const fetchUsersList = useCallback(() => {
-        (async () => {
-            const url = "/users?fields[users]=id,name,email&sort=id";
-            await request(url);
-        })();
-    }, []);
+    // Xử lý sự kiện khi phân trang
+    const handleTableChange = async (tablePagination) => {
+        const query = `filter[${column}]=${searchValue}&page[size]=${tablePagination.pageSize}&page[number]=${tablePagination.current}`;
 
-    // Tìm kiếm "value" với "column" trong csdl
-    const findBy = useCallback((column: string, value: string) => {
-        (async () => {
-            const url = `/users?filter[${column}]=${value}`;
-            await request(url);
-        })();
-    }, []);
-
-    // Hàm này sẽ delay 500ms mới lấy giá trị tìm kiếm mới và gửi lên server tránh spam
-    const search = useRef(debounce((column: string, searchValue: string) => {
-        findBy(column, searchValue);
-    }, 500)).current;
+        await fetchUsers(query, response => {
+            setPagination({
+                ...tablePagination,
+                total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
+            });
+        });
+    };
 
     // Cập nhật tiêu đề trang web
     useEffect(() => {
@@ -114,14 +108,21 @@ const UserPage: React.FC = () => {
         }
     }, [ability, history]);
 
-    // Gửi api lấy dữ liệu về cho table
+    // Tìm kiếm
     useEffect(() => {
-        if (!searchValue) {
-            fetchUsersList();
-        } else {
-            search(selected, searchValue);
-        }
-    }, [fetchUsersList, search, searchValue, selected]);
+        (async () => {
+            const query = `filter[${column}]=${searchValue}&page[size]=${pagination.pageSize}&page[number]=${pagination.current}`;
+
+            await fetchUsers(query, response => {
+                setPagination({
+                    ...pagination,
+                    current: 1,                         // Reset lại phân trang về trang 1
+                    total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
+                });
+            });
+        })();
+        // eslint-disable-next-line
+    }, [searchValue, column]);
 
     return (
         <Space direction={"vertical"} style={{ width: "100%" }}>
@@ -134,22 +135,22 @@ const UserPage: React.FC = () => {
 
             <PageHeader title="Thành Viên" subTitle={"Thực hiện các chỉnh sửa đối với thành viên."}
                 onBack={goBack} extra={[
-                    <Button onClick={fetchUsersList} key="refresh" icon={<ReloadOutlined />}>Tải lại</Button>,
+                    <Button onClick={() => setSearchValue("")} key="refresh" icon={<ReloadOutlined />}>Tải lại</Button>,
                     <Button key="create" type="primary" icon={<PlusOutlined />}>Thêm</Button>,
                 ]} style={{ padding: 0 }}>
                 <Space direction={"vertical"} style={{ width: "100%" }}>
                     {/* Thanh tìm kiếm */}
                     <Input.Search onChange={(e) => setSearchValue(e.target.value)} placeholder="Tìm kiếm thành viên"
                         addonBefore={(
-                            <Select defaultValue="name" onChange={value => setSelectedValue(value)}>
+                            <Select defaultValue="name" onChange={value => setColumn(value)}>
                                 <Select.Option value="name">Họ tên</Select.Option>
                                 <Select.Option value="email">Email</Select.Option>
                             </Select>
-                        )} />
+                        )} value={searchValue} />
 
                     {/* Bảng danh sách tài khản */}
                     <Table rowKey={"id"} dataSource={usersTable} columns={columns} sortDirections={["descend"]}
-                        loading={loading} bordered />
+                        loading={loading} pagination={pagination} onChange={handleTableChange} bordered />
                 </Space>
             </PageHeader>
         </Space>

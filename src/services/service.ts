@@ -12,8 +12,9 @@ function transformRequest(requestData: any, headers?: any): any {
     return requestData;
 }
 
+// noinspection JSUnusedLocalSymbols
 function transformResponse(responseData: any, headers?: any): any {
-    if (responseData?.data) {
+    if (responseData?.data && !responseData.meta) {
         return responseData.data;
     }
 
