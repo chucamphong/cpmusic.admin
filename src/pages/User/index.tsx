@@ -1,12 +1,13 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, notification, PageHeader, Select, Space, Table, Tag } from "antd";
 import { ColumnProps } from "antd/es/table";
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosResponse } from "axios";
+import debounce from "lodash/debounce";
 import { User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import { UserList } from "pages/User/types";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService from "services/usersService";
 
@@ -56,7 +57,7 @@ const UserPage: React.FC = () => {
     const ability = useContext(AbilityContext);
 
     const [usersTable, setUsersTable] = useState<UserList>([]);
-    const [loading, showLoading] = useState(false);
+    const [loading, showLoading] = useState(true);
     const [searchValue, setSearchValue] = useState("");
     const [column, setColumn] = useState("name");
     const [pagination, setPagination] = useState<TablePaginationConfig>({
@@ -70,6 +71,8 @@ const UserPage: React.FC = () => {
 
     // Thực hiện lấy danh sách tài khoản thỏa mãn query
     const fetchUsers = async <T extends any>(query: string, callback: (response: AxiosResponse<T>) => void) => {
+        if (ability.cannot("view", "users")) return;
+
         try {
             showLoading(true);
             const response = await usersService.fetch(`/users?${query}`);
@@ -108,21 +111,23 @@ const UserPage: React.FC = () => {
         }
     }, [ability, history]);
 
+    // Hàm tìm kiếm sử dụng debounce để delay 500ms rồi mới gửi request.
+    const findUser = useRef(debounce(async (column: string, value: string) => {
+        const query = `filter[${column}]=${value}&page[size]=${pagination.pageSize}&page[number]=${pagination.current}`;
+
+        await fetchUsers(query, response => {
+            setPagination({
+                ...pagination,
+                current: 1,                         // Reset lại phân trang về trang 1
+                total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
+            });
+        });
+    }, 500)).current;
+
     // Tìm kiếm
     useEffect(() => {
-        (async () => {
-            const query = `filter[${column}]=${searchValue}&page[size]=${pagination.pageSize}&page[number]=${pagination.current}`;
-
-            await fetchUsers(query, response => {
-                setPagination({
-                    ...pagination,
-                    current: 1,                         // Reset lại phân trang về trang 1
-                    total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
-                });
-            });
-        })();
-        // eslint-disable-next-line
-    }, [searchValue, column]);
+        findUser(column, searchValue);
+    }, [searchValue, column, findUser]);
 
     return (
         <Space direction={"vertical"} style={{ width: "100%" }}>
@@ -135,7 +140,6 @@ const UserPage: React.FC = () => {
 
             <PageHeader title="Thành Viên" subTitle={"Thực hiện các chỉnh sửa đối với thành viên."}
                 onBack={goBack} extra={[
-                    <Button onClick={() => setSearchValue("")} key="refresh" icon={<ReloadOutlined />}>Tải lại</Button>,
                     <Button key="create" type="primary" icon={<PlusOutlined />}>Thêm</Button>,
                 ]} style={{ padding: 0 }}>
                 <Space direction={"vertical"} style={{ width: "100%" }}>
