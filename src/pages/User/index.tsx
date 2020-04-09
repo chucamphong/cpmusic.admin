@@ -71,7 +71,6 @@ const UserPage: React.FC = () => {
         try {
             setLoading(true);
             const response = await usersService.fetch(url);
-            console.log(response);
             setUsersTable(response.data);
         } catch (e) {
             notification.error({
