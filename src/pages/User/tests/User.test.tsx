@@ -1,4 +1,4 @@
-import { cleanup, render as reactRender } from "@testing-library/react";
+import { act, cleanup, render as reactRender } from "@testing-library/react";
 import merge from "lodash/merge";
 import cloneDeep from "lodash/cloneDeep";
 import App from "modules/App/containers/App";
@@ -10,22 +10,24 @@ import mockStore, { mockState as state } from "tests/mocks/store";
 import "tests/mocks/window.matchMedia";
 import theme from "utils/theme";
 
-describe("Kiểm tra AppContainer", () => {
-    function render(store: ReturnType<typeof mockStore>, url: string = "/") {
-        reactRender(
-            <Provider store={store}>
-                <MemoryRouter initialEntries={[url]}>
-                    <ThemeProvider theme={theme}>
-                        <App />
-                    </ThemeProvider>
-                </MemoryRouter>
-            </Provider>,
-        );
+describe("Kiểm tra trang quản lý thành viên", () => {
+    async function render(store: ReturnType<typeof mockStore>) {
+        await act(async () => {
+            reactRender(
+                <Provider store={store}>
+                    <MemoryRouter initialEntries={["/thanh-vien"]}>
+                        <ThemeProvider theme={theme}>
+                            <App />
+                        </ThemeProvider>
+                    </MemoryRouter>
+                </Provider>,
+            );
+        });
     }
 
     afterEach(cleanup);
 
-    test("Truy cập trang quản lý thành viên", () => {
+    test("Truy cập trang quản lý thành viên", async () => {
         const store = merge(cloneDeep(state), {
             auth: {
                 user: {
@@ -38,14 +40,13 @@ describe("Kiểm tra AppContainer", () => {
             },
         });
 
-        render(mockStore(store), "/thanh-vien");
+        await render(mockStore(store));
 
         expect(document.title).toMatch(/Quản lý thành viên/i);
     });
 
-    test("Báo lỗi khi không có quyền truy cập vào trang quản lý thành viên", () => {
-        console.log(state);
-        render(mockStore(state), "/thanh-vien");
+    test("Báo lỗi khi không có quyền truy cập vào trang quản lý thành viên", async () => {
+        await render(mockStore(state));
 
         expect(document.title).toEqual("Không thể truy cập");
     });

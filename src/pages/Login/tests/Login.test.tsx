@@ -37,6 +37,10 @@ describe("Kiểm tra trang đăng nhập", () => {
 
     afterEach(cleanup);
 
+    afterAll(() => {
+        jest.clearAllMocks();
+    });
+
     test("Báo lỗi nếu địa chỉ email để trống.", async () => {
         submitForm();
 

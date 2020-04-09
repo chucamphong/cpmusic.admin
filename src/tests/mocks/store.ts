@@ -5,7 +5,6 @@ import { RootState } from "store/types";
 export const initialState: RootState = {
     auth: {},
     loading: { status: "nothing" },
-    users: {},
 };
 
 export const mockState: RootState = {
@@ -23,7 +22,6 @@ export const mockState: RootState = {
     loading: {
         status: "nothing",
     },
-    users: {},
 };
 
 const mockStore = (state: RootState = initialState) => configureStore<RootState>()(state);

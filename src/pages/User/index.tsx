@@ -1,15 +1,13 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, PageHeader, Select, Space, Table, Tag } from "antd";
+import { Breadcrumb, Button, Input, notification, PageHeader, Select, Space, Table, Tag } from "antd";
 import { ColumnProps } from "antd/es/table";
 import debounce from "lodash/debounce";
 import { User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
+import { UserList } from "pages/User/types";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import useSelector from "store/hooks/useSelector";
-import { AppDispatch } from "store/types";
-import { users } from "./store/actions";
+import usersService from "services/usersService";
 
 const columns: ColumnProps<User>[] = [{
     title: "ID",
@@ -54,29 +52,51 @@ const columns: ColumnProps<User>[] = [{
 
 const UserPage: React.FC = () => {
     const history = useHistory();
-    const dispatch = useDispatch<AppDispatch>();
     const ability = useContext(AbilityContext);
 
-    const usersTable = useSelector(state => state.users);
+    // Lưu danh sách tài khoản để hiển thị lên table
+    const [usersTable, setUsersTable] = useState<UserList>();
+    // Lưu trạng thái của thanh loading hiện/ẩn
+    const [loading, setLoading] = useState(false);
     // Lưu giá trị tìm kiếm
     const [searchValue, setSearchValue] = useState<string>();
     // Lưu cột để phục vụ cho việc tìm kiếm
-    const [selected, setSelectedValue] = useState<string>("Họ tên");
+    const [selected, setSelectedValue] = useState<string>("name");
 
     // Quay trở lại trang trước đó
     const goBack = () => history.goBack();
 
+    // Gửi request để lấy dữ liệu
+    const request = async (url: string) => {
+        try {
+            setLoading(true);
+            const response = await usersService.fetch(url);
+            console.log(response);
+            setUsersTable(response.data);
+        } catch (e) {
+            notification.error({
+                message: "Truy vấn thất bại",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Lấy danh sách tài khoản người dùng
     const fetchUsersList = useCallback(() => {
-        const url = "/users?fields[users]=id,name,email&sort=id";
-        dispatch(users.request(url));
-    }, [dispatch]);
+        (async () => {
+            const url = "/users?fields[users]=id,name,email&sort=id";
+            await request(url);
+        })();
+    }, []);
 
     // Tìm kiếm "value" với "column" trong csdl
     const findBy = useCallback((column: string, value: string) => {
-        const url = `/users?filter[${column}]=${value}`;
-        dispatch(users.request(url));
-    }, [dispatch]);
+        (async () => {
+            const url = `/users?filter[${column}]=${value}`;
+            await request(url);
+        })();
+    }, []);
 
     // Hàm này sẽ delay 500ms mới lấy giá trị tìm kiếm mới và gửi lên server tránh spam
     const search = useRef(debounce((column: string, searchValue: string) => {
@@ -100,8 +120,7 @@ const UserPage: React.FC = () => {
         if (!searchValue) {
             fetchUsersList();
         } else {
-            const column = selected === "Họ tên" ? "name" : "email";
-            search(column, searchValue);
+            search(selected, searchValue);
         }
     }, [fetchUsersList, search, searchValue, selected]);
 
@@ -123,15 +142,15 @@ const UserPage: React.FC = () => {
                     {/* Thanh tìm kiếm */}
                     <Input.Search onChange={(e) => setSearchValue(e.target.value)} placeholder="Tìm kiếm thành viên"
                         addonBefore={(
-                            <Select defaultValue="Họ tên" onChange={value => setSelectedValue(value)}>
-                                <Select.Option value="Họ tên">Họ tên</Select.Option>
-                                <Select.Option value="Email">Email</Select.Option>
+                            <Select defaultValue="name" onChange={value => setSelectedValue(value)}>
+                                <Select.Option value="name">Họ tên</Select.Option>
+                                <Select.Option value="email">Email</Select.Option>
                             </Select>
                         )} />
 
                     {/* Bảng danh sách tài khản */}
-                    <Table rowKey={"id"} dataSource={usersTable.list} columns={columns}
-                        loading={usersTable.status === "pending"} sortDirections={["descend"]} bordered />
+                    <Table rowKey={"id"} dataSource={usersTable} columns={columns} sortDirections={["descend"]}
+                        loading={loading} bordered />
                 </Space>
             </PageHeader>
         </Space>
