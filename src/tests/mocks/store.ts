@@ -5,6 +5,7 @@ import { RootState } from "store/types";
 export const initialState: RootState = {
     auth: {},
     loading: { status: "nothing" },
+    users: {},
 };
 
 export const mockState: RootState = {
@@ -14,7 +15,7 @@ export const mockState: RootState = {
             id: faker.random.number(10),
             name: faker.name.findName(),
             email: faker.internet.email(),
-            role: "mod",
+            role: "member",
             email_verified_at: Date.now().toString(),
             permissions: [],
         },
@@ -22,6 +23,7 @@ export const mockState: RootState = {
     loading: {
         status: "nothing",
     },
+    users: {},
 };
 
 const mockStore = (state: RootState = initialState) => configureStore<RootState>()(state);

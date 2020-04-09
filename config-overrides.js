@@ -20,7 +20,8 @@ module.exports = override(
             // Base Scaffolding Variables
             "@popover-background": "#303135",
             "@icon-color": "#e8e9ed",
+            "@select-item-selected-bg": "@primary-color",
         },
     }),
-    useEslintRc()
+    useEslintRc(),
 );

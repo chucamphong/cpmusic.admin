@@ -1,12 +1,13 @@
-import { HomeOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Dropdown, Menu } from "antd";
 import { useAuth } from "modules/Auth";
+import AbilityContext from "modules/CASL/AbilityContext";
 import Avatar from "modules/Common/components/Avatar";
 import Layout from "modules/Common/components/Layout";
 import Logo from "modules/Dashboard/components/Logo";
 import Overlay from "modules/Dashboard/components/Overlay";
 import StyledMenuOutlined from "modules/Dashboard/components/StyledMenuOutlined";
-import React, { MouseEvent, useEffect, useState } from "react";
+import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useMedia } from "react-use";
 import MyTheme from "utils/theme";
@@ -21,6 +22,7 @@ const siderWidth = MyTheme.sider.width;
 const DashBoardContainer: React.FC = ({ children }) => {
     const auth = useAuth();
     const location = useLocation();
+    const ability = useContext(AbilityContext);
     const [collapsed, setCollapsed] = useState(true);
     const isMobile = useMedia(`(max-width: ${MyTheme.layout.sm})`);
     const toggleSider = () => setCollapsed(!collapsed);
@@ -61,19 +63,11 @@ const DashBoardContainer: React.FC = ({ children }) => {
                             <span>Trang chủ</span>
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="/thanh-vien" title={null}>
+                    <Menu.Item key="/thanh-vien" title={null} hidden={ability.cannot("view", "users")}>
                         <UserOutlined />
                         <Link to="/thanh-vien">
                             <span>Thành viên</span>
                         </Link>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <VideoCameraOutlined />
-                        <span>nav 2</span>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                        <UploadOutlined />
-                        <span>nav 3</span>
                     </Menu.Item>
                 </Menu>
             </Layout.Sider>

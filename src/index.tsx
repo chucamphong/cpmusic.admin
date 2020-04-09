@@ -1,3 +1,5 @@
+import { ConfigProvider } from "antd";
+import vi from "antd/es/locale/vi_VN";
 import AppContainer from "modules/App/containers/App";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -12,7 +14,9 @@ ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
             <ThemeProvider theme={myTheme}>
-                <AppContainer />
+                <ConfigProvider locale={vi} componentSize={"middle"} space={{ size: "middle" }}>
+                    <AppContainer />
+                </ConfigProvider>
             </ThemeProvider>
         </BrowserRouter>
     </Provider>,

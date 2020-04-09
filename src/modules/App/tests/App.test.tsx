@@ -1,4 +1,5 @@
 import { cleanup, render as reactRender } from "@testing-library/react";
+import { cloneDeep, merge } from "lodash";
 import App from "modules/App/containers/App";
 import React from "react";
 import { Provider } from "react-redux";
@@ -30,29 +31,47 @@ describe("Kiểm tra AppContainer", () => {
     });
 
     test("Dẫn đến trang chủ nếu đã đăng nhập (Phải có quyền quản trị)", () => {
-        render(mockStore(state));
+        const store = mockStore(merge(cloneDeep(state), {
+            auth: {
+                user: {
+                    role: "mod",
+                },
+            },
+        }));
+
+        render(store);
 
         expect(document.title).toEqual("Trang chủ");
     });
 
-    test("Bắt đăng nhập lại nếu tài khoản không có quyền quản lý", () => {
-        const store = mockStore({
-            ...state,
+    test("Bắt lỗi không có quyền truy cập nếu tài khoản không có quyền quản lý", () => {
+        const store = mockStore(merge(cloneDeep(state), {
             auth: {
-                // @ts-ignore
                 user: {
                     role: "member",
                 },
             },
-        });
+        }));
 
         render(store);
 
-        expect(document.title).toEqual("Đăng nhập");
+        expect(document.title).toEqual("Không thể truy cập");
     });
 
-    test("Nhập url /users và dẫn ra chính xác url đó", () => {
-        render(mockStore(state), "/thanh-vien");
+    test("Nhập url /thanh-vien và dẫn ra chính xác url đó", () => {
+        const store = mockStore(merge(cloneDeep(state), {
+            auth: {
+                user: {
+                    role: "mod",
+                    permissions: [{
+                        actions: "view",
+                        subject: "users",
+                    }],
+                },
+            },
+        }));
+
+        render(store, "/thanh-vien");
 
         expect(document.title).toMatch(/Quản lý thành viên/i);
     });

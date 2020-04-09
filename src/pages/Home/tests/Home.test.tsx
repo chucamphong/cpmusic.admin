@@ -1,4 +1,5 @@
 import { cleanup, render } from "@testing-library/react";
+import { cloneDeep, merge } from "lodash";
 import App from "modules/App/containers/App";
 import React from "react";
 import { Provider } from "react-redux";
@@ -8,7 +9,13 @@ import mockStore, { mockState as state } from "tests/mocks/store";
 import theme from "utils/theme";
 
 describe("Kiểm tra trang chủ", () => {
-    const store = mockStore(state);
+    const store = mockStore(merge(cloneDeep(state), {
+        auth: {
+            user: {
+                role: "mod",
+            },
+        },
+    }));
 
     beforeEach(() => {
         render(
