@@ -3,6 +3,7 @@ import Ability from "modules/CASL/Ability";
 import AbilityContext from "modules/CASL/AbilityContext";
 import Loading from "modules/Loading/containers/Loading";
 import { GuestRoute, ProtectedRoute } from "modules/Route";
+import AccountPage from "pages/Account";
 import AccessDenied from "pages/Error/AccessDenied";
 import NoMatch from "pages/Error/NoMatch";
 import HomePage from "pages/Home";
@@ -28,6 +29,9 @@ const AppContainer: React.FC = () => {
                     {/* Quản lý thành viên */}
                     <ProtectedRoute path={"/thanh-vien"} action={"view"} subject={"users"} exact>
                         <UserPage />
+                    </ProtectedRoute>
+                    <ProtectedRoute path={"/tai-khoan"} action={"view"} subject={"me"} exact>
+                        <AccountPage />
                     </ProtectedRoute>
                     {/* Đăng nhập */}
                     <GuestRoute path={"/dang-nhap"}>

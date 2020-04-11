@@ -1,57 +1,17 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, notification, PageHeader, Select, Space, Table, Tag } from "antd";
-import { ColumnProps } from "antd/es/table";
+import { Breadcrumb, Button, Input, notification, PageHeader, Popconfirm, Select, Space, Table, Tag } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosResponse } from "axios";
 import debounce from "lodash/debounce";
-import { User } from "modules/Auth";
+import truncate from "lodash/truncate";
+import { useAuth, User } from "modules/Auth";
 import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService from "services/usersService";
 
-const columns: ColumnProps<User>[] = [{
-    title: "ID",
-    dataIndex: "id",
-    sorter: (a, b) => a.id - b.id,
-}, {
-    title: "Họ tên",
-    dataIndex: "name",
-    sorter: (a, b) => a.name.localeCompare(b.name),
-}, {
-    title: "Email",
-    dataIndex: "email",
-    sorter: (a, b) => a.email.localeCompare(b.email),
-}, {
-    title: "Chức vụ",
-    dataIndex: "role",
-    filters: [{
-        text: "Admin",
-        value: "admin",
-    }, {
-        text: "Mod",
-        value: "mod",
-    }, {
-        text: "Member",
-        value: "member",
-    }],
-    onFilter: (value, record: User) => new RegExp(record.role, "i").test(value.toString()),
-    render: (role: string) => (
-        <Tag color="#09b87f">
-            {role.toUpperCase()}
-        </Tag>
-    ),
-}, {
-    title: "Tác vụ",
-    render: () => (
-        <Space>
-            <Button type="danger"><DeleteOutlined /></Button>
-            <Button type="primary"><EditOutlined /></Button>
-        </Space>
-    ),
-}];
-
 const UserPage: React.FC = () => {
+    const auth = useAuth();
     const history = useHistory();
 
     const [usersTable, setUsersTable] = useState<UserList>([]);
@@ -60,7 +20,7 @@ const UserPage: React.FC = () => {
     const [column, setColumn] = useState("name");
     const [pagination, setPagination] = useState<TablePaginationConfig>({
         current: 1,
-        pageSize: 10,
+        pageSize: 20,
         showSizeChanger: false,
     });
 
@@ -84,7 +44,7 @@ const UserPage: React.FC = () => {
     };
 
     // Xử lý sự kiện khi phân trang
-    const handleTableChange = async (tablePagination) => {
+    const handleTableChange = async (tablePagination: TablePaginationConfig) => {
         const query = `filter[${column}]=${searchValue}&page[size]=${tablePagination.pageSize}&page[number]=${tablePagination.current}`;
 
         await fetchUsers(query, response => {
@@ -107,6 +67,33 @@ const UserPage: React.FC = () => {
             });
         });
     }, 500)).current;
+
+    const refreshUsersList = async () => {
+        const query = `filter[${column}]=${searchValue}&page[size]=${pagination.pageSize}&page[number]=${pagination.current}`;
+
+        await fetchUsers(query, response => {
+            setPagination({
+                ...pagination,
+                total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
+            });
+        });
+    };
+
+    const deleteUser = async (user: User) => {
+        try {
+            showLoading(true);
+            const response = await usersService.remove(user.id);
+            await refreshUsersList();
+            notification.success({
+                message: response.data.message,
+            });
+            console.log(response.data);
+        } catch (e) {
+            notification.error({
+                message: "Bạn không có quyền thực hiện thao tác này",
+            });
+        }
+    };
 
     // Cập nhật tiêu đề trang web
     useEffect(() => {
@@ -131,21 +118,37 @@ const UserPage: React.FC = () => {
                 onBack={goBack} extra={[
                     <Button key="create" type="primary" icon={<PlusOutlined />}>Thêm</Button>,
                 ]} style={{ padding: 0 }}>
-                <Space direction={"vertical"} style={{ width: "100%" }}>
-                    {/* Thanh tìm kiếm */}
-                    <Input.Search onChange={(e) => setSearchValue(e.target.value)} placeholder="Tìm kiếm thành viên"
-                        addonBefore={(
-                            <Select defaultValue="name" onChange={value => setColumn(value)}>
-                                <Select.Option value="name">Họ tên</Select.Option>
-                                <Select.Option value="email">Email</Select.Option>
-                            </Select>
-                        )} value={searchValue} />
-
-                    {/* Bảng danh sách tài khản */}
-                    <Table rowKey={"id"} dataSource={usersTable} columns={columns} sortDirections={["descend"]}
-                        loading={loading} pagination={pagination} onChange={handleTableChange} bordered />
-                </Space>
+                {/* Thanh tìm kiếm */}
+                <Input.Search onChange={(e) => setSearchValue(e.target.value)} placeholder="Tìm kiếm thành viên"
+                    addonBefore={(
+                        <Select defaultValue="name" onChange={value => setColumn(value)}>
+                            <Select.Option value="name">Họ tên</Select.Option>
+                            <Select.Option value="email">Email</Select.Option>
+                        </Select>
+                    )} value={searchValue} />
             </PageHeader>
+            {/* Bảng danh sách tài khản */}
+            <Table rowKey={"id"} dataSource={usersTable} loading={loading}
+                pagination={pagination} onChange={handleTableChange}
+                scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
+                <Table.Column title="ID" dataIndex="id" width={64} />
+                <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
+                <Table.Column title="Địa chỉ email" dataIndex="email" width={300} ellipsis />
+                <Table.Column<string> title="Chức vụ" dataIndex="role" width={84} render={(role: string) => (
+                    <Tag>{role.toUpperCase()}</Tag>
+                )} />
+                <Table.Column<User> title="Chức năng" width={84} align="center" render={(_, record) => (
+                    <Space>
+                        <Popconfirm
+                            title={`Bạn có muốn xóa thành viên ${truncate(record.name, { length: 10 })}?`}
+                            onConfirm={() => deleteUser(record)}
+                            disabled={auth.user?.id === record.id}>
+                            <Button type="danger" icon={<DeleteOutlined />} disabled={auth.user?.id === record.id} />
+                        </Popconfirm>
+                        <Button type="primary" icon={<EditOutlined />} />
+                    </Space>
+                )} />
+            </Table>
         </Space>
     );
 };

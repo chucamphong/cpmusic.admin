@@ -39,8 +39,8 @@ const DashBoardContainer: React.FC = ({ children }) => {
 
         return (
             <Menu>
-                <Menu.Item key={"/thong-tin"}>
-                    <a href={"/thong-tin"}>Thông tin</a>
+                <Menu.Item key={"/tai-khoan"}>
+                    <a href={"/tai-khoan"}>Thông tin</a>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key={"/dang-xuat"}>
