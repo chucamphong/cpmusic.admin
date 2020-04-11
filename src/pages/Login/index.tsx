@@ -10,7 +10,7 @@ import { isDevelopment } from "utils/helpers";
  * Tạo bộ dữ liệu mẫu phục vụ cho môi trường lập trình
  */
 const initialValues = isDevelopment() ? {
-    "email": "chucamphong@gmail.com",
+    "email": "admin@gmail.com",
     "password": "password",
 } : {};
 

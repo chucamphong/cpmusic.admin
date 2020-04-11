@@ -103,7 +103,7 @@ describe("Kiểm tra trang đăng nhập", () => {
     });
 
     test("Hiện thông báo \"Đăng nhập thành công\" nếu đăng nhập thành công", async () => {
-        change(getInputEmail(), "chucamphong@gmail.com");
+        change(getInputEmail(), "admin@gmail.com");
         change(getInputPassword(), "password");
         submitForm();
 
