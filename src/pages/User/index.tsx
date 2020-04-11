@@ -5,9 +5,8 @@ import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosResponse } from "axios";
 import debounce from "lodash/debounce";
 import { User } from "modules/Auth";
-import AbilityContext from "modules/CASL/AbilityContext";
 import { UserList } from "pages/User/types";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService from "services/usersService";
 
@@ -54,7 +53,6 @@ const columns: ColumnProps<User>[] = [{
 
 const UserPage: React.FC = () => {
     const history = useHistory();
-    const ability = useContext(AbilityContext);
 
     const [usersTable, setUsersTable] = useState<UserList>([]);
     const [loading, showLoading] = useState(true);
@@ -71,8 +69,6 @@ const UserPage: React.FC = () => {
 
     // Thực hiện lấy danh sách tài khoản thỏa mãn query
     const fetchUsers = async <T extends any>(query: string, callback: (response: AxiosResponse<T>) => void) => {
-        if (ability.cannot("view", "users")) return;
-
         try {
             showLoading(true);
             const response = await usersService.fetch(`/users?${query}`);
@@ -99,18 +95,6 @@ const UserPage: React.FC = () => {
         });
     };
 
-    // Cập nhật tiêu đề trang web
-    useEffect(() => {
-        document.title = "Quản lý thành viên";
-    }, []);
-
-    // Kiểm tra quyền truy cập
-    useEffect(() => {
-        if (ability.cannot("view", "users")) {
-            history.push("/khong-co-quyen-truy-cap");
-        }
-    }, [ability, history]);
-
     // Hàm tìm kiếm sử dụng debounce để delay 500ms rồi mới gửi request.
     const findUser = useRef(debounce(async (column: string, value: string) => {
         const query = `filter[${column}]=${value}&page[size]=${pagination.pageSize}&page[number]=${pagination.current}`;
@@ -123,6 +107,11 @@ const UserPage: React.FC = () => {
             });
         });
     }, 500)).current;
+
+    // Cập nhật tiêu đề trang web
+    useEffect(() => {
+        document.title = "Quản lý thành viên";
+    }, []);
 
     // Tìm kiếm
     useEffect(() => {

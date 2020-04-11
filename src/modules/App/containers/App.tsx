@@ -26,7 +26,7 @@ const AppContainer: React.FC = () => {
                         <HomePage />
                     </ProtectedRoute>
                     {/* Quản lý thành viên */}
-                    <ProtectedRoute path={"/thanh-vien"} exact>
+                    <ProtectedRoute path={"/thanh-vien"} action={"view"} subject={"users"} exact>
                         <UserPage />
                     </ProtectedRoute>
                     {/* Đăng nhập */}
