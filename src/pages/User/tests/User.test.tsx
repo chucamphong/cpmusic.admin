@@ -33,7 +33,7 @@ describe("Kiểm tra trang quản lý thành viên", () => {
                 user: {
                     role: "mod",
                     permissions: [{
-                        actions: "view",
+                        action: "view",
                         subject: "users",
                     }],
                 },

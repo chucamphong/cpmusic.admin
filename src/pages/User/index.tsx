@@ -126,29 +126,30 @@ const UserPage: React.FC = () => {
                             <Select.Option value="email">Email</Select.Option>
                         </Select>
                     )} value={searchValue} />
+
+                {/* Bảng danh sách tài khản */}
+                <Table rowKey={"id"} dataSource={usersTable} loading={loading}
+                    pagination={pagination} onChange={handleTableChange}
+                    scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
+                    <Table.Column title="ID" dataIndex="id" width={64} />
+                    <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
+                    <Table.Column title="Địa chỉ email" dataIndex="email" width={300} ellipsis />
+                    <Table.Column<string> title="Chức vụ" dataIndex="role" width={84} render={(role: string) => (
+                        <Tag>{role.toUpperCase()}</Tag>
+                    )} />
+                    <Table.Column<User> title="Chức năng" width={84} align="center" render={(_, record) => (
+                        <Space>
+                            <Popconfirm
+                                title={`Bạn có muốn xóa thành viên ${truncate(record.name, { length: 10 })}?`}
+                                onConfirm={() => deleteUser(record)}
+                                disabled={auth.user?.id === record.id}>
+                                <Button type="danger" icon={<DeleteOutlined />} disabled={auth.user?.id === record.id} />
+                            </Popconfirm>
+                            <Button type="primary" icon={<EditOutlined />} />
+                        </Space>
+                    )} />
+                </Table>
             </PageHeader>
-            {/* Bảng danh sách tài khản */}
-            <Table rowKey={"id"} dataSource={usersTable} loading={loading}
-                pagination={pagination} onChange={handleTableChange}
-                scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
-                <Table.Column title="ID" dataIndex="id" width={64} />
-                <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
-                <Table.Column title="Địa chỉ email" dataIndex="email" width={300} ellipsis />
-                <Table.Column<string> title="Chức vụ" dataIndex="role" width={84} render={(role: string) => (
-                    <Tag>{role.toUpperCase()}</Tag>
-                )} />
-                <Table.Column<User> title="Chức năng" width={84} align="center" render={(_, record) => (
-                    <Space>
-                        <Popconfirm
-                            title={`Bạn có muốn xóa thành viên ${truncate(record.name, { length: 10 })}?`}
-                            onConfirm={() => deleteUser(record)}
-                            disabled={auth.user?.id === record.id}>
-                            <Button type="danger" icon={<DeleteOutlined />} disabled={auth.user?.id === record.id} />
-                        </Popconfirm>
-                        <Button type="primary" icon={<EditOutlined />} />
-                    </Space>
-                )} />
-            </Table>
         </Space>
     );
 };

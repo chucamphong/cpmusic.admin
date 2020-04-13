@@ -1,4 +1,5 @@
 import { Button, Col, Form, Input, notification, Row, Typography } from "antd";
+import { Store } from "antd/es/form/interface";
 import { useAuth } from "modules/Auth";
 import FullHeightScreen from "modules/Common/components/FullHeightScreen";
 import { FieldData, Rules } from "pages/Login/types";
@@ -68,7 +69,7 @@ const LoginPage: React.FC = () => {
         }
     }, [status, message]);
 
-    const onFinish = (values) => {
+    const onFinish = (values: Store) => {
         const { email, password } = values as FieldData;
         auth.login(email, password);
     };

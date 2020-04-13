@@ -64,7 +64,7 @@ describe("Kiểm tra AppContainer", () => {
                 user: {
                     role: "mod",
                     permissions: [{
-                        actions: "view",
+                        action: "view",
                         subject: "users",
                     }],
                 },
