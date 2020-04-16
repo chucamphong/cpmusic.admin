@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, notification, Row, Typography } from "antd";
+import { Button, Col, Form, Input, Row, Typography } from "antd";
 import { Store } from "antd/es/form/interface";
 import { useAuth } from "modules/Auth";
 import FullHeightScreen from "modules/Common/components/FullHeightScreen";
@@ -6,6 +6,7 @@ import { FieldData, Rules } from "pages/Login/types";
 import React, { useEffect, useState } from "react";
 import useSelector from "store/hooks/useSelector";
 import { isDevelopment } from "utils/helpers";
+import notification from "utils/notification";
 
 /**
  * Tạo bộ dữ liệu mẫu phục vụ cho môi trường lập trình
@@ -61,15 +62,11 @@ const LoginPage: React.FC = () => {
             notification.open({
                 type: status,
                 message: message ?? "Đăng nhập thành công",
-                style: {
-                    // Căn giữa trên màn hình di động
-                    right: -8,
-                },
             });
         }
     }, [status, message]);
 
-    const onFinish = (values: Store) => {
+    const submitForm = (values: Store) => {
         const { email, password } = values as FieldData;
         auth.login(email, password);
     };
@@ -81,7 +78,7 @@ const LoginPage: React.FC = () => {
                     <Row justify="center">
                         <Typography.Title level={2}>Đăng Nhập</Typography.Title>
                     </Row>
-                    <Form onFinish={onFinish} initialValues={initialValues}>
+                    <Form onFinish={submitForm} initialValues={initialValues}>
                         <Form.Item validateStatus={errors?.email ? "error" : "validating"}
                             help={errors?.email?.toString()}
                             name="email" rules={rules.email}>

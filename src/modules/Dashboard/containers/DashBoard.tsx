@@ -26,6 +26,11 @@ const DashBoardContainer: React.FC = ({ children }) => {
     const [collapsed, setCollapsed] = useState(true);
     const isMobile = useMedia(`(max-width: ${MyTheme.layout.sm})`);
     const toggleSider = () => setCollapsed(!collapsed);
+    const selectedKey = location.pathname.split("/");
+
+    if (selectedKey.length > 2) {
+        selectedKey.pop();
+    }
 
     useEffect(() => {
         setCollapsed(isMobile);
@@ -56,7 +61,7 @@ const DashBoardContainer: React.FC = ({ children }) => {
                 <Logo>
                     <Link to="/">CPMusic</Link>
                 </Logo>
-                <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]}>
+                <Menu theme="dark" mode="inline" selectedKeys={[selectedKey.join("/")]}>
                     <Menu.Item key="/" title={null}>
                         <HomeOutlined />
                         <Link to="/">

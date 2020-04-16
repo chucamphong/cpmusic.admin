@@ -1,4 +1,4 @@
-import { SubjectRawRule } from "@casl/ability";
+import { SubjectRawRule, SubjectType } from "@casl/ability";
 import { actions } from "modules/Auth";
 import { ActionType } from "typesafe-actions";
 
@@ -13,7 +13,7 @@ export type User = {
     email: string;
     email_verified_at: string;
     role: string;
-    permissions: SubjectRawRule<string, string, unknown>[]
+    permissions: SubjectRawRule<string, SubjectType, any>[]
 }
 
 export type LoginResponse = {
