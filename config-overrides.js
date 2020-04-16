@@ -1,5 +1,5 @@
-const { override, fixBabelImports, addLessLoader, useEslintRc } = require("customize-cra");
-const darkThemeVars = require("antd/dist/dark-theme");
+const { override, fixBabelImports, addLessLoader, useEslintRc, useBabelRc } = require("customize-cra");
+const { getThemeVariables } = require("antd/dist/theme");
 
 module.exports = override(
     fixBabelImports("import", {
@@ -10,9 +10,9 @@ module.exports = override(
     addLessLoader({
         javascriptEnabled: true,
         modifyVars: {
-            "hack": `true; @import "${require.resolve("antd/lib/style/color/colorPalette.less")}";`,
-            ...darkThemeVars,
-            // Colors
+            ...getThemeVariables({
+                dark: true,
+            }),
             "@primary-color": "#09b87f",
             // "@primary-color": "#87b0f2",
             "@error-color": "#c71c56",
@@ -24,4 +24,5 @@ module.exports = override(
         },
     }),
     useEslintRc(),
+    useBabelRc(),
 );
