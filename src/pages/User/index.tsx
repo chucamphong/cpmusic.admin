@@ -128,7 +128,7 @@ const UserPage: React.FC = () => {
                                 <Select.Option value="name">Họ tên</Select.Option>
                                 <Select.Option value="email">Email</Select.Option>
                             </Select>
-                        )} value={searchValue} />
+                        )} value={searchValue} maxLength={255} />
 
                     {/* Bảng danh sách tài khản */}
                     <Table rowKey={"id"} dataSource={usersTable} loading={loading}
@@ -137,16 +137,22 @@ const UserPage: React.FC = () => {
                         <Table.Column title="ID" dataIndex="id" width={64} />
                         <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
                         <Table.Column title="Địa chỉ email" dataIndex="email" width={300} ellipsis />
-                        <Table.Column<string> title="Chức vụ" dataIndex="role" width={84} render={(role: string) => (
-                            <Tag>{role.toUpperCase()}</Tag>
-                        )} />
-                        <Table.Column<User> title="Chức năng" width={84} align="center" render={(_, record) => (
+                        <Table.Column title="Chức vụ" dataIndex="role" width={84} render={(role: string) => {
+                            const color = {
+                                "admin": "#d8345f",
+                                "mod": "#0779e4",
+                                "member": "default",
+                            };
+                            return <Tag color={color[role]}>{role.toUpperCase()}</Tag>;
+                        }} />
+                        <Table.Column<User> title="Chức năng" width={100} align="center" render={(_, record) => (
                             <Space>
                                 <Popconfirm
                                     title={`Bạn có muốn xóa thành viên ${truncate(record.name, { length: 10 })}?`}
                                     onConfirm={() => deleteUser(record)}
                                     disabled={auth.user?.id === record.id}>
-                                    <Button type="danger" icon={<DeleteOutlined />} disabled={auth.user?.id === record.id} />
+                                    <Button type="danger" icon={<DeleteOutlined />}
+                                        disabled={auth.user?.id === record.id} />
                                 </Popconfirm>
                                 <Link to={`/thanh-vien/${record.id}`}>
                                     <Button type="primary" icon={<EditOutlined />} />

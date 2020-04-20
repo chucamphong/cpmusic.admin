@@ -35,8 +35,7 @@ const authReducer: AuthReducer = (state = {}, action) => {
             case "@auth/LOGOUT_SUCCESS":
                 return {};
             case "@auth/LOGOUT_FAILURE":
-                alert("Đăng xuất thất bại");
-                break;
+                return {};
             default:
                 return draft;
         }

@@ -14,6 +14,7 @@ export const mockState: RootState = {
             id: faker.random.number(10),
             name: faker.name.findName(),
             email: faker.internet.email(),
+            avatar: faker.image.avatar(),
             role: "member",
             email_verified_at: Date.now().toString(),
             permissions: [],

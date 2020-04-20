@@ -81,12 +81,12 @@ const DashBoardContainer: React.FC = ({ children }) => {
                 <Layout.Header fixed>
                     <StyledMenuOutlined onClick={toggleSider} />
                     <Dropdown overlay={UserMenu} overlayStyle={{ width: 150 }} trigger={["click"]}>
-                        <Avatar cursor size={"large"} alt="Avatar">
+                        <Avatar src={auth.user?.avatar} size="large" alt="Avatar" cursor>
                             <UserOutlined />
                         </Avatar>
                     </Dropdown>
                 </Layout.Header>
-                <Layout.Content margin={20} textAlign={"justify"}>
+                <Layout.Content margin={20} textAlign="justify">
                     {children}
                 </Layout.Content>
             </Layout>

@@ -1,32 +1,62 @@
-import { Breadcrumb, Button, Col, Form, Input, PageHeader, Row, Select, Space, Upload } from "antd";
+import { Breadcrumb, Button, Col, Form, Input, PageHeader, Row, Select, Space } from "antd";
 import { AxiosError } from "axios";
-import { isEmpty } from "lodash";
-import { User } from "modules/Auth";
+import { isEmpty, has } from "lodash";
+import { useAuth, User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
+import UploadImage from "pages/User/components/UploadImage";
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import usersService from "services/usersService";
 import { difference } from "utils/helpers";
 import notification from "utils/notification";
+import { Rule } from "antd/es/form";
 
 type ParamTypes = {
     id: string;
 };
 
+type UserWithPasswordType = Partial<User & { password: string }>;
+
+/**
+ * Tạo bộ quy tắc để kiểm tra dữ liệu khi nhập form
+ */
+const rules: ArrayDictionary<Rule> = {
+    name: [{
+        required: true,
+        message: "Họ tên không được để trống",
+    }, {
+        min: 8,
+        message: "Tối thiểu 8 ký tự",
+    }],
+    role: [{
+        required: true,
+        message: "Chức vụ không được bỏ trống",
+    }],
+    password: [{
+        min: 8,
+        message: "Mật khẩu tối thiểu 8 ký tự",
+    }],
+    avatar: [{
+        type: "url",
+        message: "Hình ảnh không hợp lệ",
+    }],
+};
+
 const EditUserPage: React.FC = () => {
+    const auth = useAuth();
     const history = useHistory();
+    const [form] = Form.useForm();
     const ability = useContext(AbilityContext);
     const params = useParams<ParamTypes>();
     const [user, setUser] = useState<Partial<User>>({});
     const [loading, showLoading] = useState(false);
+    const [quit, quitPage] = useState(false);
 
-    // Cập nhật tiêu đề trang web
     useEffect(() => {
+        // Cập nhật tiêu đề trang web
         document.title = "Chỉnh sửa thành viên";
-    }, []);
 
-    // Lấy thông tin tài khoản có id là params.id
-    useEffect(() => {
+        // Lấy thông tin tài khoản có id là params.id
         (async () => {
             try {
                 const response = await usersService.getUser(+params.id);
@@ -40,11 +70,20 @@ const EditUserPage: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        if (quit) {
+            goBack();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [quit]);
+
     const goBack = () => history.push("/thanh-vien");
 
-    const submitForm = async (formData: Partial<User>) => {
+    const isMe = () => auth.user?.id === user.id;
+
+    const submitForm = async (formData: UserWithPasswordType) => {
         // Lấy những trường thay đổi để gửi lên server, tránh gửi dư thừa những trường không thay đổi
-        const data = difference(formData, user);
+        const data = difference<UserWithPasswordType>(formData, user);
 
         // Trường hợp không có gì thay đổi thì không làm gì hết
         if (isEmpty(data)) {
@@ -58,12 +97,23 @@ const EditUserPage: React.FC = () => {
             showLoading(true);
             // Gửi request
             const response = await usersService.update(+params.id, data);
+
+            // Nếu thay đổi mật khẩu hoặc chức vụ của bản thân thì sẽ bị logout ra để cập nhật lại dữ liệu
+            if (isMe() && (has(data, "password") || has(data, "role"))) {
+                return auth.logout();
+            }
+
             // Hiện thông báo thành công
             notification.success({
                 message: response.data.message,
             });
-            // Cập nhật thông tin thành công thì quay về trang thành viên
-            goBack();
+
+            /**
+             * Quay về trang quản lý thành viên
+             * Sửa lỗi: Nếu xài thẳng hàm history.push thì sẽ bị memory leak khi chuyển trang nên phải tạo một flag để
+             * chuyển trang mà không bị memory leak
+             */
+            quitPage(true);
         } catch (e) {
             notification.error({
                 message: (e as AxiosError).response?.data.message,
@@ -74,20 +124,20 @@ const EditUserPage: React.FC = () => {
     };
 
     return (
-        <Space direction={"vertical"} style={{ width: "100%" }}>
+        <Space direction="vertical" style={{ width: "100%" }}>
             <Breadcrumb>
                 <Breadcrumb.Item>
-                    <Link to={"/"}>Trang chủ</Link>
+                    <Link to="/">Trang chủ</Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                    <Link to={"/thanh-vien"}>Thành viên</Link>
+                    <Link to="/thanh-vien">Thành viên</Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Chỉnh sửa thông tin</Breadcrumb.Item>
             </Breadcrumb>
 
             <PageHeader title="Chỉnh Sửa Thông Tin" subTitle={`Chỉnh sửa tài khoản ${user.name}.`}
                 onBack={goBack} style={{ padding: 0 }}>
-                <Form layout={"vertical"} onFinish={submitForm} fields={Object.keys(user).map(key => ({
+                <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(user).map(key => ({
                     name: [key],
                     value: user[key],
                 }))}>
@@ -98,17 +148,17 @@ const EditUserPage: React.FC = () => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12}>
-                            <Form.Item name="name" label="Họ tên">
-                                <Input />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
                             <Form.Item name="email" label="Địa chỉ email">
-                                <Input />
+                                <Input disabled />
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12}>
-                            <Form.Item name="role" label="Chức vụ">
+                            <Form.Item name="name" label="Họ tên" rules={rules.name}>
+                                <Input maxLength={255} />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={12}>
+                            <Form.Item name="role" label="Chức vụ" rules={rules.role}>
                                 <Select disabled={ability.cannot("update", "users.permissions")}>
                                     <Select.Option value="admin">Admin</Select.Option>
                                     <Select.Option value="mod">Moderator</Select.Option>
@@ -117,26 +167,23 @@ const EditUserPage: React.FC = () => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12}>
-                            <Form.Item label={"Mật khẩu"}>
+                            <Form.Item name="password" label="Mật khẩu" rules={rules.password}>
                                 <Input.Password maxLength={255} />
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12}>
-                            <Form.Item label={"Ảnh đại diện"}>
-                                <Upload listType={"picture-card"} showUploadList={false}>
-                                    <div>
-                                        <div className="ant-upload-text">Upload</div>
-                                    </div>
-                                </Upload>
+                            <Form.Item name={"avatar"} label="Ảnh đại diện">
+                                <UploadImage defaultImage={user.avatar}
+                                    onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Row gutter={12} justify={"end"}>
+                    <Row gutter={12} justify="end">
                         <Col>
                             <Button onClick={goBack}>Hủy bỏ</Button>
                         </Col>
                         <Col>
-                            <Button type={"primary"} htmlType="submit" loading={loading}>Cập nhật</Button>
+                            <Button type="primary" htmlType="submit" loading={loading}>Cập nhật</Button>
                         </Col>
                     </Row>
                 </Form>

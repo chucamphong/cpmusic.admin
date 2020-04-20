@@ -13,6 +13,10 @@ function update(userId: number, data: Partial<User>) {
     return service.patch(`/users/${userId}`, data);
 }
 
+function uploadAvatar(data: FormData) {
+    return service.post("/users/avatar", data);
+}
+
 function remove(userId: number) {
     return service.delete(`/users/${userId}`);
 }
@@ -21,5 +25,6 @@ export default {
     fetch,
     getUser,
     update,
+    uploadAvatar,
     remove,
 };
