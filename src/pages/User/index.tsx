@@ -25,7 +25,7 @@ const UserPage: React.FC = () => {
     });
 
     // Quay trở lại trang trước đó
-    const goBack = () => history.goBack();
+    const goBack = () => history.push("/thanh-vien");
 
     // Thực hiện lấy danh sách tài khoản thỏa mãn query
     const fetchUsers = async <T extends any>(query: string, callback: (response: AxiosResponse<T>) => void) => {
