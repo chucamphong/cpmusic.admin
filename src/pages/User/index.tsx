@@ -87,7 +87,6 @@ const UserPage: React.FC = () => {
             notification.success({
                 message: response.data.message,
             });
-            console.log(response.data);
         } catch (e) {
             notification.error({
                 message: "Bạn không có quyền thực hiện thao tác này",

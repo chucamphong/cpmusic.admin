@@ -1,4 +1,4 @@
-import axios, { AxiosTransformer } from "axios";
+import axios, { AxiosError, AxiosTransformer } from "axios";
 
 const baseURL = "http://api.cpmusic.com/api";
 
@@ -31,5 +31,17 @@ const axiosInstance = axios.create({
     transformResponse: [transformResponse, ...axios.defaults.transformResponse as AxiosTransformer[]],
 });
 
-export const CancelToken = axios.CancelToken;
+axiosInstance.interceptors.response.use(response => {
+    return response;
+}, (error: AxiosError) => {
+    const statusCode = error.response?.status;
+
+    if (statusCode === 401) {
+        localStorage.removeItem("plainTextToken");
+        window.location.reload();
+    }
+
+    return Promise.reject(error);
+});
+
 export default axiosInstance;
