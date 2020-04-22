@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, notification, PageHeader, Popconfirm, Select, Space, Table, Tag } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import debounce from "lodash/debounce";
 import truncate from "lodash/truncate";
 import { useAuth, User } from "modules/Auth";
@@ -24,7 +24,7 @@ const UserPage: React.FC = () => {
         showSizeChanger: false,
     });
 
-    // Quay trở lại trang trước đó
+    // Quay trở lại trang /thanh-vien đó
     const goBack = () => history.push("/thanh-vien");
 
     // Thực hiện lấy danh sách tài khoản thỏa mãn query
@@ -34,9 +34,9 @@ const UserPage: React.FC = () => {
             const response = await usersService.fetch(`/users?${query}`);
             setUsersTable(response.data.data);
             callback(response);
-        } catch (error) {
+        } catch (e) {
             notification.error({
-                message: error.message,
+                message: (e as AxiosError).response?.data.message,
             });
         } finally {
             showLoading(false);
@@ -89,7 +89,7 @@ const UserPage: React.FC = () => {
             });
         } catch (e) {
             notification.error({
-                message: "Bạn không có quyền thực hiện thao tác này",
+                message: (e as AxiosError).response?.data.message,
             });
         } finally {
             showLoading(false);
