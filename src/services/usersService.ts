@@ -1,5 +1,5 @@
 import { User } from "modules/Auth";
-import buildQuery, { Query } from "utils/queryBuilder";
+import buildQuery, { Query } from "utils/query-builder/query";
 import service from "./service";
 
 const model = "users";

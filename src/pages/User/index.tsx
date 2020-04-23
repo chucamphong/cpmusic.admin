@@ -9,7 +9,7 @@ import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService, { UsersListResponse } from "services/usersService";
-import { Query } from "utils/queryBuilder";
+import { Query } from "utils/query-builder/query";
 
 const UserPage: React.FC = () => {
     const auth = useAuth();
