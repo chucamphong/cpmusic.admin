@@ -1,4 +1,4 @@
-import { isNumber } from "lodash";
+import { isNumber, isUndefined } from "lodash";
 import isEqual from "lodash/isEqual";
 import { actions, Role, User } from "modules/Auth";
 import { useDispatch } from "react-redux";
@@ -25,7 +25,9 @@ const useAuth = () => {
 
             return user?.role === role;
         },
-        isMe(entity: User | number): boolean {
+        isMe(entity: User | number | undefined): boolean {
+            if (isUndefined(entity)) return false;
+
             if (isNumber(entity)) {
                 return user?.id === entity;
             }
