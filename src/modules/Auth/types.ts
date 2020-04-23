@@ -14,7 +14,7 @@ export type User = {
     avatar: string;
     email_verified_at: string;
     role: string;
-    permissions: SubjectRawRule<string, any, any>[]
+    permissions: SubjectRawRule<"create" | "view" | "update" | "delete", any, any>[]
 }
 
 export type LoginResponse = {
