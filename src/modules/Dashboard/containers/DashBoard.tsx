@@ -1,4 +1,5 @@
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { useAbility } from "@casl/react";
 import { Dropdown, Menu } from "antd";
 import { useAuth } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
@@ -7,7 +8,7 @@ import Layout from "modules/Common/components/Layout";
 import Logo from "modules/Dashboard/components/Logo";
 import Overlay from "modules/Dashboard/components/Overlay";
 import StyledMenuOutlined from "modules/Dashboard/components/StyledMenuOutlined";
-import React, { MouseEvent, useContext, useEffect, useState } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useMedia } from "react-use";
 import MyTheme from "utils/theme";
@@ -22,7 +23,7 @@ const siderWidth = MyTheme.sider.width;
 const DashBoardContainer: React.FC = ({ children }) => {
     const auth = useAuth();
     const location = useLocation();
-    const ability = useContext(AbilityContext);
+    const ability = useAbility(AbilityContext);
     const [collapsed, setCollapsed] = useState(true);
     const isMobile = useMedia(`(max-width: ${MyTheme.layout.sm})`);
     const toggleSider = () => setCollapsed(!collapsed);
