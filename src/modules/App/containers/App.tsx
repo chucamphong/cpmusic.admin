@@ -9,6 +9,7 @@ import NoMatch from "pages/Error/NoMatch";
 import HomePage from "pages/Home";
 import LoginPage from "pages/Login";
 import UserPage from "pages/User";
+import AddUserPage from "pages/User/add";
 import EditUserPage from "pages/User/edit";
 import React, { Fragment } from "react";
 import { Route, Switch } from "react-router-dom";
@@ -30,6 +31,9 @@ const AppContainer: React.FC = () => {
                     {/* Quản lý thành viên */}
                     <ProtectedRoute path={"/thanh-vien"} action={"view"} subject={"users"} exact>
                         <UserPage />
+                    </ProtectedRoute>
+                    <ProtectedRoute path={"/thanh-vien/tao-tai-khoan"} action={"create"} subject={"users"} exact>
+                        <AddUserPage />
                     </ProtectedRoute>
                     <ProtectedRoute path={"/thanh-vien/:id"} action={"update"} subject={"users"} exact>
                         <EditUserPage />

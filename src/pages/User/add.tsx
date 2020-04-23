@@ -1,19 +1,10 @@
 import { Breadcrumb, Button, Col, Form, Input, PageHeader, Row, Select, Space } from "antd";
-import { AxiosError } from "axios";
-import { isEmpty, has } from "lodash";
-import { useAuth, User } from "modules/Auth";
+import { Rule } from "antd/es/form";
+import { User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import UploadImage from "pages/User/components/UploadImage";
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
-import usersService from "services/usersService";
-import { difference } from "utils/helpers";
-import notification from "utils/notification";
-import { Rule } from "antd/es/form";
-
-type ParamTypes = {
-    id: string;
-};
+import { Link, useHistory } from "react-router-dom";
 
 type UserWithPasswordType = Partial<User & { password: string }>;
 
@@ -42,32 +33,16 @@ const rules: ArrayDictionary<Rule> = {
     }],
 };
 
-const EditUserPage: React.FC = () => {
-    const auth = useAuth();
+const AddUserPage: React.FC = () => {
     const history = useHistory();
     const [form] = Form.useForm();
     const ability = useContext(AbilityContext);
-    const params = useParams<ParamTypes>();
-    const [user, setUser] = useState<Partial<User>>({});
     const [loading, showLoading] = useState(false);
     const [quit, quitPage] = useState(false);
 
     useEffect(() => {
         // Cập nhật tiêu đề trang web
-        document.title = "Chỉnh sửa thành viên";
-
-        // Lấy thông tin tài khoản có id là params.id
-        (async () => {
-            try {
-                const response = await usersService.find(+params.id);
-                setUser(response.data);
-            } catch (e) {
-                notification.error({
-                    message: (e as AxiosError).response?.data.message,
-                });
-            }
-        })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        document.title = "Thêm tài khoản";
     }, []);
 
     useEffect(() => {
@@ -79,48 +54,7 @@ const EditUserPage: React.FC = () => {
 
     const goBack = () => history.push("/thanh-vien");
 
-    const isMe = () => auth.user?.id === user.id;
-
     const submitForm = async (formData: UserWithPasswordType) => {
-        // Lấy những trường thay đổi để gửi lên server, tránh gửi dư thừa những trường không thay đổi
-        const data = difference<UserWithPasswordType>(formData, user);
-
-        // Trường hợp không có gì thay đổi thì không làm gì hết
-        if (isEmpty(data)) {
-            return notification.info({
-                message: "Có vẻ như bạn chưa thay đổi gì cả",
-            });
-        }
-
-        // Gửi request cập nhật thông tin lên server
-        try {
-            showLoading(true);
-            // Gửi request
-            const response = await usersService.update(+params.id, data);
-
-            // Nếu thay đổi mật khẩu hoặc chức vụ của bản thân thì sẽ bị logout ra để cập nhật lại dữ liệu
-            if (isMe() && (has(data, "password") || has(data, "role"))) {
-                return auth.logout();
-            }
-
-            // Hiện thông báo thành công
-            notification.success({
-                message: response.data.message,
-            });
-
-            /**
-             * Quay về trang quản lý thành viên
-             * Sửa lỗi: Nếu xài thẳng hàm history.push thì sẽ bị memory leak khi chuyển trang nên phải tạo một flag để
-             * chuyển trang mà không bị memory leak
-             */
-            quitPage(true);
-        } catch (e) {
-            notification.error({
-                message: (e as AxiosError).response?.data.message,
-            });
-        } finally {
-            showLoading(false);
-        }
     };
 
     return (
@@ -135,21 +69,12 @@ const EditUserPage: React.FC = () => {
                 <Breadcrumb.Item>Chỉnh sửa thông tin</Breadcrumb.Item>
             </Breadcrumb>
 
-            <PageHeader title="Chỉnh Sửa Thông Tin" subTitle={`Chỉnh sửa tài khoản ${user.name}.`}
-                onBack={goBack} style={{ padding: 0 }}>
-                <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(user).map(key => ({
-                    name: [key],
-                    value: user[key],
-                }))}>
+            <PageHeader title="Thêm tài khoản" onBack={goBack} style={{ padding: 0 }}>
+                <Form form={form} layout="vertical" onFinish={submitForm}>
                     <Row gutter={24}>
                         <Col xs={24} sm={12}>
-                            <Form.Item name="id" label="ID">
-                                <Input disabled />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
                             <Form.Item name="email" label="Địa chỉ email">
-                                <Input disabled />
+                                <Input maxLength={255} />
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12}>
@@ -173,8 +98,7 @@ const EditUserPage: React.FC = () => {
                         </Col>
                         <Col xs={24} sm={12}>
                             <Form.Item name={"avatar"} label="Ảnh đại diện">
-                                <UploadImage defaultImage={user.avatar}
-                                    onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
+                                <UploadImage onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -192,4 +116,4 @@ const EditUserPage: React.FC = () => {
     );
 };
 
-export default EditUserPage;
+export default AddUserPage;

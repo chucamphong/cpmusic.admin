@@ -8,7 +8,8 @@ import { useAuth, User } from "modules/Auth";
 import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import usersService from "services/usersService";
+import usersService, { UsersListResponse } from "services/usersService";
+import { Query } from "utils/queryBuilder";
 
 const UserPage: React.FC = () => {
     const auth = useAuth();
@@ -28,10 +29,10 @@ const UserPage: React.FC = () => {
     const goBack = () => history.push("/thanh-vien");
 
     // Thực hiện lấy danh sách tài khoản thỏa mãn query
-    const fetchUsers = async <T extends any>(query: string, callback: (response: AxiosResponse<T>) => void) => {
+    const fetchUsers = async (query: Query, callback: (response: AxiosResponse<UsersListResponse>) => void) => {
         try {
             showLoading(true);
-            const response = await usersService.fetch(`/users?${query}`);
+            const response = await usersService.get(query);
             setUsersTable(response.data.data);
             callback(response);
         } catch (e) {
@@ -45,9 +46,16 @@ const UserPage: React.FC = () => {
 
     // Xử lý sự kiện khi phân trang
     const handleTableChange = async (tablePagination: TablePaginationConfig) => {
-        const query = `filter[${column}]=${searchValue}&page[size]=${tablePagination.pageSize}&page[number]=${tablePagination.current}`;
-
-        await fetchUsers(query, response => {
+        await fetchUsers({
+            model: "users",
+            filters: {
+                [column]: searchValue,
+            },
+            pagination: {
+                size: tablePagination.pageSize,
+                number: tablePagination.current,
+            },
+        }, response => {
             setPagination({
                 ...tablePagination,
                 total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
@@ -57,9 +65,16 @@ const UserPage: React.FC = () => {
 
     // Hàm tìm kiếm sử dụng debounce để delay 500ms rồi mới gửi request.
     const findUser = useRef(debounce(async (column: string, value: string) => {
-        const query = `filter[${column}]=${value}&page[size]=${pagination.pageSize}&page[number]=${pagination.current}`;
-
-        await fetchUsers(query, response => {
+        await fetchUsers({
+            model: "users",
+            filters: {
+                [column]: value,
+            },
+            pagination: {
+                size: pagination.pageSize,
+                number: pagination.current,
+            },
+        }, response => {
             setPagination({
                 ...pagination,
                 current: 1,                         // Reset lại phân trang về trang 1
@@ -69,9 +84,16 @@ const UserPage: React.FC = () => {
     }, 500)).current;
 
     const refreshUsersList = async () => {
-        const query = `filter[${column}]=${searchValue}&page[size]=${pagination.pageSize}&page[number]=${pagination.current}`;
-
-        await fetchUsers(query, response => {
+        await fetchUsers({
+            model: "users",
+            filters: {
+                [column]: searchValue,
+            },
+            pagination: {
+                size: pagination.pageSize,
+                number: pagination.current,
+            },
+        }, response => {
             setPagination({
                 ...pagination,
                 total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
@@ -117,7 +139,9 @@ const UserPage: React.FC = () => {
 
             <PageHeader title="Thành Viên" subTitle={"Thực hiện các chỉnh sửa đối với thành viên."}
                 onBack={goBack} extra={[
-                    <Button key="create" type="primary" icon={<PlusOutlined />}>Thêm</Button>,
+                    <Link to="/thanh-vien/tao-tai-khoan" key="tao-tai-khoan">
+                        <Button key="create" type="primary" icon={<PlusOutlined />}>Thêm</Button>
+                    </Link>,
                 ]} style={{ padding: 0 }}>
                 <Space direction={"vertical"} style={{ width: "100%" }}>
                     {/* Thanh tìm kiếm */}
