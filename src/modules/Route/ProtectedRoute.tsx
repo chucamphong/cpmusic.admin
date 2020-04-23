@@ -1,8 +1,9 @@
-import { useAuth } from "modules/Auth";
+import { useAbility } from "@casl/react";
+import { useAuth, Role } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import DashBoardContainer from "modules/Dashboard/containers/DashBoard";
 import AccessDenied from "pages/Error/AccessDenied";
-import React, { useContext } from "react";
+import React from "react";
 import { Redirect, Route, RouteProps } from "react-router-dom";
 
 type Props = {
@@ -12,13 +13,13 @@ type Props = {
 
 const ProtectedRoute: React.FC<RouteProps & Props> = ({ children, action, subject, ...rest }) => {
     const auth = useAuth();
-    const ability = useContext(AbilityContext);
+    const ability = useAbility(AbilityContext);
 
     if (auth.isAuthenticated()) {
         return (
             <Route {...rest} render={() => {
                 const okay = action && subject ? ability.can(action, subject) : true;
-                return !auth.hasRole("member") && okay ?
+                return !auth.hasRole(Role.Member) && okay ?
                     <DashBoardContainer>{children}</DashBoardContainer> :
                     <AccessDenied />;
             }} />
