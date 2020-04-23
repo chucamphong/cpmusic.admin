@@ -80,8 +80,6 @@ const EditUserPage: React.FC = () => {
 
     const goBack = () => history.push("/thanh-vien");
 
-    const isMe = () => auth.user?.id === user.id;
-
     const submitForm = async (formData: UserWithPasswordType) => {
         // Lấy những trường thay đổi để gửi lên server, tránh gửi dư thừa những trường không thay đổi
         const data = difference<UserWithPasswordType>(formData, user);
@@ -100,7 +98,7 @@ const EditUserPage: React.FC = () => {
             const response = await usersService.update(+params.id, data);
 
             // Nếu thay đổi mật khẩu hoặc chức vụ của bản thân thì sẽ bị logout ra để cập nhật lại dữ liệu
-            if (isMe() && (has(data, "password") || has(data, "role"))) {
+            if (auth.isMe(user?.id) && (has(data, "password") || has(data, "role"))) {
                 return auth.logout();
             }
 

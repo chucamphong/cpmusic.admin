@@ -172,7 +172,7 @@ const UserPage: React.FC = () => {
                                 <Popconfirm
                                     title={`Bạn có muốn xóa thành viên ${truncate(record.name, { length: 10 })}?`}
                                     onConfirm={() => deleteUser(record)}
-                                    disabled={auth.user?.id === record.id}>
+                                    disabled={auth.isMe(record)}>
                                     <Button type="danger" icon={<DeleteOutlined />}
                                         disabled={auth.user?.id === record.id} />
                                 </Popconfirm>
