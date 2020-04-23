@@ -1,37 +1,15 @@
-import { cleanup, render } from "@testing-library/react";
-import { cloneDeep, merge } from "lodash";
-import App from "modules/App/containers/App";
-import React from "react";
-import { Provider } from "react-redux";
-import { MemoryRouter } from "react-router-dom";
-import { ThemeProvider } from "styled-components";
-import mockStore, { mockState as state } from "tests/mocks/store";
-import theme from "utils/theme";
+import { cleanup } from "@testing-library/react";
+import renderPage, { loginWith, Role } from "tests/utils";
 
 describe("Kiểm tra trang chủ", () => {
-    const store = mockStore(merge(cloneDeep(state), {
-        auth: {
-            user: {
-                role: "mod",
-            },
-        },
-    }));
-
-    beforeEach(() => {
-        render(
-            <Provider store={store}>
-                <MemoryRouter initialEntries={["/"]}>
-                    <ThemeProvider theme={theme}>
-                        <App />
-                    </ThemeProvider>
-                </MemoryRouter>
-            </Provider>,
-        );
+    beforeEach(async () => {
+        const store = loginWith(Role.Moderator);
+        await renderPage(store, "/");
     });
 
     afterEach(cleanup);
 
-    test("Tiêu đề là \"Trang chủ\"", () => {
+    test("Tiêu đề là \"Trang chủ\"", async () => {
         expect(document.title).toEqual("Trang chủ");
     });
 });

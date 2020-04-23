@@ -26,7 +26,7 @@ describe("Kiểm tra trang đăng nhập", () => {
     beforeEach(() => {
         render(
             <Provider store={store}>
-                <MemoryRouter>
+                <MemoryRouter initialEntries={["/dang-nhap"]}>
                     <ThemeProvider theme={theme}>
                         <App />
                     </ThemeProvider>
