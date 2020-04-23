@@ -7,6 +7,12 @@ export type Credentials = {
     password: string;
 }
 
+export enum Role {
+    Admin = "admin",
+    Moderator = "mod",
+    Member = "member",
+}
+
 export type User = {
     id: number;
     name: string;

@@ -12,6 +12,7 @@ import React, { MouseEvent, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useMedia } from "react-use";
 import MyTheme from "utils/theme";
+import notification from "utils/notification";
 
 const siderWidth = MyTheme.sider.width;
 
@@ -40,6 +41,7 @@ const DashBoardContainer: React.FC = ({ children }) => {
     const UserMenu = () => {
         const logout = (e: MouseEvent) => {
             e.preventDefault();
+            notification.destroy();
             auth.logout();
         };
 

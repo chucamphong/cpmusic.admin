@@ -11,7 +11,7 @@ import LoginPage from "pages/Login";
 import UserPage from "pages/User";
 import AddUserPage from "pages/User/add";
 import EditUserPage from "pages/User/edit";
-import React, { Fragment } from "react";
+import React from "react";
 import { Route, Switch } from "react-router-dom";
 
 const AppContainer: React.FC = () => {
@@ -20,39 +20,37 @@ const AppContainer: React.FC = () => {
     Ability.update(auth.user?.permissions ?? []);
 
     return (
-        <Fragment>
-            <AbilityContext.Provider value={Ability}>
-                <Loading />
-                <Switch>
-                    {/* Trang chủ */}
-                    <ProtectedRoute path={"/"} exact>
-                        <HomePage />
-                    </ProtectedRoute>
-                    {/* Quản lý thành viên */}
-                    <ProtectedRoute path={"/thanh-vien"} action={"view"} subject={"users"} exact>
-                        <UserPage />
-                    </ProtectedRoute>
-                    <ProtectedRoute path={"/thanh-vien/tao-tai-khoan"} action={"create"} subject={"users"} exact>
-                        <AddUserPage />
-                    </ProtectedRoute>
-                    <ProtectedRoute path={"/thanh-vien/:id"} action={"update"} subject={"users"} exact>
-                        <EditUserPage />
-                    </ProtectedRoute>
-                    {/* Xem thông tin tài khoản */}
-                    <ProtectedRoute path={"/tai-khoan"} action={"view"} subject={"me"} exact>
-                        <AccountPage />
-                    </ProtectedRoute>
-                    {/* Đăng nhập */}
-                    <GuestRoute path={"/dang-nhap"}>
-                        <LoginPage />
-                    </GuestRoute>
-                    {/* Trang báo lỗi nếu người dùng truy cập trái phép một trang nào đó */}
-                    <Route path={"/khong-co-quyen-truy-cap"} component={AccessDenied} />
-                    {/* Trang báo lỗi nếu url không tồn tại*/}
-                    <Route path={"*"} component={NoMatch} />
-                </Switch>
-            </AbilityContext.Provider>
-        </Fragment>
+        <AbilityContext.Provider value={Ability}>
+            <Loading />
+            <Switch>
+                {/* Trang chủ */}
+                <ProtectedRoute path={"/"} exact>
+                    <HomePage />
+                </ProtectedRoute>
+                {/* Quản lý thành viên */}
+                <ProtectedRoute path={"/thanh-vien"} action={"view"} subject={"users"} exact>
+                    <UserPage />
+                </ProtectedRoute>
+                <ProtectedRoute path={"/thanh-vien/tao-tai-khoan"} action={"create"} subject={"users"} exact>
+                    <AddUserPage />
+                </ProtectedRoute>
+                <ProtectedRoute path={"/thanh-vien/:id"} action={"update"} subject={"users"} exact>
+                    <EditUserPage />
+                </ProtectedRoute>
+                {/* Xem thông tin tài khoản */}
+                <ProtectedRoute path={"/tai-khoan"} action={"view"} subject={"me"} exact>
+                    <AccountPage />
+                </ProtectedRoute>
+                {/* Đăng nhập */}
+                <GuestRoute path={"/dang-nhap"}>
+                    <LoginPage />
+                </GuestRoute>
+                {/* Trang báo lỗi nếu người dùng truy cập trái phép một trang nào đó */}
+                <Route path={"/khong-co-quyen-truy-cap"} component={AccessDenied} />
+                {/* Trang báo lỗi nếu url không tồn tại*/}
+                <Route path={"*"} component={NoMatch} />
+            </Switch>
+        </AbilityContext.Provider>
     );
 };
 

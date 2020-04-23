@@ -1,15 +1,16 @@
+import { useAbility } from "@casl/react";
 import { Breadcrumb, Button, Col, Form, Input, PageHeader, Row, Select, Space } from "antd";
+import { Rule } from "antd/es/form";
 import { AxiosError } from "axios";
-import { isEmpty, has } from "lodash";
+import { has, isEmpty } from "lodash";
 import { useAuth, User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import UploadImage from "pages/User/components/UploadImage";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import usersService from "services/usersService";
 import { difference } from "utils/helpers";
 import notification from "utils/notification";
-import { Rule } from "antd/es/form";
 
 type ParamTypes = {
     id: string;
@@ -46,7 +47,7 @@ const EditUserPage: React.FC = () => {
     const auth = useAuth();
     const history = useHistory();
     const [form] = Form.useForm();
-    const ability = useContext(AbilityContext);
+    const ability = useAbility(AbilityContext);
     const params = useParams<ParamTypes>();
     const [user, setUser] = useState<Partial<User>>({});
     const [loading, showLoading] = useState(false);
@@ -135,8 +136,7 @@ const EditUserPage: React.FC = () => {
                 <Breadcrumb.Item>Chỉnh sửa thông tin</Breadcrumb.Item>
             </Breadcrumb>
 
-            <PageHeader title="Chỉnh Sửa Thông Tin" subTitle={`Chỉnh sửa tài khoản ${user.name}.`}
-                onBack={goBack} style={{ padding: 0 }}>
+            <PageHeader title="Chỉnh Sửa Thông Tin" onBack={goBack} style={{ padding: 0 }}>
                 <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(user).map(key => ({
                     name: [key],
                     value: user[key],

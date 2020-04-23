@@ -137,12 +137,11 @@ const UserPage: React.FC = () => {
                 <Breadcrumb.Item>Thành viên</Breadcrumb.Item>
             </Breadcrumb>
 
-            <PageHeader title="Thành Viên" subTitle={"Thực hiện các chỉnh sửa đối với thành viên."}
-                onBack={goBack} extra={[
-                    <Link to="/thanh-vien/tao-tai-khoan" key="tao-tai-khoan">
-                        <Button key="create" type="primary" icon={<PlusOutlined />}>Thêm</Button>
-                    </Link>,
-                ]} style={{ padding: 0 }}>
+            <PageHeader title="Thành Viên" onBack={goBack} extra={[
+                <Link to="/thanh-vien/tao-tai-khoan" key="create">
+                    <Button type="primary" icon={<PlusOutlined />}>Thêm</Button>
+                </Link>,
+            ]} style={{ padding: 0 }}>
                 <Space direction={"vertical"} style={{ width: "100%" }}>
                     {/* Thanh tìm kiếm */}
                     <Input.Search onChange={(e) => setSearchValue(e.target.value)} placeholder="Tìm kiếm thành viên"

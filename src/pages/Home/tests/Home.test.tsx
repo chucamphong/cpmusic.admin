@@ -1,5 +1,6 @@
 import { cleanup } from "@testing-library/react";
-import renderPage, { loginWith, Role } from "tests/utils";
+import { Role } from "modules/Auth";
+import renderPage, { loginWith } from "tests/utils";
 
 describe("Kiểm tra trang chủ", () => {
     beforeEach(async () => {

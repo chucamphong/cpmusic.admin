@@ -1,6 +1,7 @@
+import { Role } from "modules/Auth";
 import { initialState } from "tests/mocks/store";
 import "tests/mocks/window.matchMedia";
-import renderPage, { loginWith, Role } from "tests/utils";
+import renderPage, { loginWith } from "tests/utils";
 
 describe("Kiểm tra AppContainer", () => {
     test("Dẫn đến trang đăng nhập nếu chưa đăng nhập", async () => {
