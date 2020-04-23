@@ -1,5 +1,6 @@
+import { isNumber } from "lodash";
 import isEqual from "lodash/isEqual";
-import { actions, Role } from "modules/Auth";
+import { actions, Role, User } from "modules/Auth";
 import { useDispatch } from "react-redux";
 import useSelector from "store/hooks/useSelector";
 import { AppDispatch } from "store/types";
@@ -23,6 +24,13 @@ const useAuth = () => {
             if (!this.isAuthenticated()) return false;
 
             return user?.role === role;
+        },
+        isMe(entity: User | number): boolean {
+            if (isNumber(entity)) {
+                return user?.id === entity;
+            }
+
+            return isEqual(user, entity);
         },
         user,
     };
