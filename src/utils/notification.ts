@@ -3,7 +3,7 @@ import { ArgsProps, NotificationApi } from "antd/es/notification";
 
 const Notification: NotificationApi = {} as NotificationApi;
 
-const myArgs: Partial<ArgsProps> = {
+const myArgs: Pick<ArgsProps, "style"> = {
     style: {
         right: -8,
     },
