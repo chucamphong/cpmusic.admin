@@ -33,6 +33,9 @@ export default {
     find(userId: number) {
         return service.get<User>(`/${model}/${userId}`);
     },
+    create(user: User & { password: string }) {
+        return service.post(`/${model}`, user);
+    },
     update(userId: number, data: Partial<User>) {
         return service.patch(`/${model}/${userId}`, data);
     },
