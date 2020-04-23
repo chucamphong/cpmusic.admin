@@ -12,6 +12,13 @@ type UserWithPasswordType = Partial<User & { password: string }>;
  * Tạo bộ quy tắc để kiểm tra dữ liệu khi nhập form
  */
 const rules: ArrayDictionary<Rule> = {
+    email: [{
+        required: true,
+        message: "Địa chỉ email không được để trống",
+    }, {
+        type: "email",
+        message: "Địa chỉ email không hợp lệ",
+    }],
     name: [{
         required: true,
         message: "Họ tên không được để trống",
@@ -73,7 +80,7 @@ const AddUserPage: React.FC = () => {
                 <Form form={form} layout="vertical" onFinish={submitForm}>
                     <Row gutter={24}>
                         <Col xs={24} sm={12}>
-                            <Form.Item name="email" label="Địa chỉ email">
+                            <Form.Item name="email" label="Địa chỉ email" rules={rules.email}>
                                 <Input maxLength={255} />
                             </Form.Item>
                         </Col>
@@ -97,7 +104,7 @@ const AddUserPage: React.FC = () => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12}>
-                            <Form.Item name={"avatar"} label="Ảnh đại diện">
+                            <Form.Item name={"avatar"} label="Ảnh đại diện" rules={rules.avatar}>
                                 <UploadImage onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
                             </Form.Item>
                         </Col>

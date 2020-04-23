@@ -120,7 +120,7 @@ const UserPage: React.FC = () => {
 
     // Cập nhật tiêu đề trang web
     useEffect(() => {
-        document.title = "Quản lý thành viên";
+        document.title = "Quản lý tài khoản";
     }, []);
 
     // Tìm kiếm

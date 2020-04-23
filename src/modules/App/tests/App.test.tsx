@@ -73,7 +73,7 @@ describe("Kiểm tra AppContainer", () => {
 
         render(store, "/thanh-vien");
 
-        expect(document.title).toMatch(/Quản lý thành viên/i);
+        expect(document.title).toEqual("Quản lý tài khoản");
     });
 
     test("Nhập link bậy bạ sẽ hiện trang không tìm thấy url", () => {
