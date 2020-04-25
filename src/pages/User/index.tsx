@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, notification, PageHeader, Popconfirm, Select, Space, Table, Tag } from "antd";
+import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Select, Space, Table, Tag } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosError, AxiosResponse } from "axios";
 import debounce from "lodash/debounce";
@@ -9,6 +9,7 @@ import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService, { UsersListResponse } from "services/usersService";
+import notification from "utils/notification";
 import { Query } from "utils/query-builder/query";
 
 const UserPage: React.FC = () => {

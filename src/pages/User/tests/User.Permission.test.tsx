@@ -1,9 +1,16 @@
 import "tests/mocks/window.matchMedia";
 import { Role } from "modules/Auth";
+import { initialState } from "tests/mocks/store";
 import renderPage, { loginWith } from "tests/utils";
 
 describe("Kiểm tra phân quyền của phần quản lý tài khoản", () => {
     describe("Kiểm tra trang quản lý tài khoản", () => {
+        test("Bắt đăng nhập nếu chưa đăng nhập", async () => {
+            await renderPage(initialState, "/thanh-vien");
+
+            expect(document.title).toEqual("Đăng nhập");
+        });
+
         test("Có thể truy cập trang quản lý tài khoản", async () => {
             const store = loginWith(Role.Moderator, [{
                 action: "view",
@@ -25,7 +32,13 @@ describe("Kiểm tra phân quyền của phần quản lý tài khoản", () => 
     });
 
     describe("Kiểm tra trang tạo tài khoản", () => {
-        test("Truy cập trang tạo tài khoản", async () => {
+        test("Bắt đăng nhập nếu chưa đăng nhập", async () => {
+            await renderPage(initialState, "/thanh-vien");
+
+            expect(document.title).toEqual("Đăng nhập");
+        });
+
+        test("Có thể truy cập truy cập trang tạo tài khoản", async () => {
             const store = loginWith(Role.Moderator, [{
                 action: "create",
                 subject: "users",

@@ -30,6 +30,17 @@ describe("Kiểm tra thư viện query-builder", () => {
         expect(url).toEqual(expected);
     });
 
+    test("Kiểm tra includes", () => {
+        const query: Query = {
+            model: "users",
+            includes: ["category", "role"],
+        };
+
+        const url = buildQuery(query);
+
+        expect(url).toEqual("users?include=category,role");
+    });
+
     test("Kiểm tra tổng thể", () => {
         const query: Query = {
             model: "users",

@@ -8,6 +8,7 @@ import AccessDenied from "pages/Error/AccessDenied";
 import NoMatch from "pages/Error/NoMatch";
 import HomePage from "pages/Home";
 import LoginPage from "pages/Login";
+import SongPage from "pages/Song";
 import UserPage from "pages/User";
 import AddUserPage from "pages/User/add";
 import EditUserPage from "pages/User/edit";
@@ -36,6 +37,10 @@ const AppContainer: React.FC = () => {
                 </ProtectedRoute>
                 <ProtectedRoute path={"/thanh-vien/:id"} action={"update"} subject={"users"} exact>
                     <EditUserPage />
+                </ProtectedRoute>
+                {/* Quản lý bài hát */}
+                <ProtectedRoute path={"/bai-hat"} action={"view"} subject={"songs"} exact>
+                    <SongPage />
                 </ProtectedRoute>
                 {/* Xem thông tin tài khoản */}
                 <ProtectedRoute path={"/tai-khoan"} action={"view"} subject={"me"} exact>

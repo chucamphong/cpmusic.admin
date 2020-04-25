@@ -5,9 +5,12 @@ export type Query = {
         number?: number;
         size?: number;
     };
+    includes?: string[];
+    appends?: string[];
+    sort?: string[];
 };
 
-function buildQuery({ model, filters, pagination }: Query): string {
+function buildQuery({ model, filters, pagination, includes, appends, sort }: Query): string {
     let query: string[] = [];
 
     if (filters) {
@@ -20,6 +23,18 @@ function buildQuery({ model, filters, pagination }: Query): string {
         query.push(
             ...Object.keys(pagination).map(key => `page[${key}]=${pagination[key]}`),
         );
+    }
+
+    if (includes) {
+        query.push(`include=${includes.join(",")}`);
+    }
+
+    if (appends) {
+        query.push(`append=${appends.join(",")}`);
+    }
+
+    if (sort) {
+        query.push(`sort=${sort.join(",")}`);
     }
 
     return `${model}?${query.join("&")}`;
