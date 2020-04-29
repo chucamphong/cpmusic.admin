@@ -1,3 +1,5 @@
+import { Artist } from "pages/Artists/types";
+
 export type Song = {
     id: number;
     name: string;
@@ -7,6 +9,7 @@ export type Song = {
     year: number;
     views: number;
     category: Category;
+    artists: Artist | Artist[]
 };
 
 export type Category = {

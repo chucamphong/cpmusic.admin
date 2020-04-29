@@ -4,6 +4,7 @@ import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Space, Table } from 
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosError, AxiosResponse } from "axios";
 import { truncate } from "lodash";
+import { Artist } from "pages/Artists/types";
 import { Category, Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
@@ -44,7 +45,12 @@ const SongPage: React.FC = () => {
     // Tìm kiềm bái hát
     const searchSong = async () => {
         const query = new Query().for("songs")
-            .include("category")
+            .include(["category", "artists"])
+            .select({
+                songs: ["id", "name", "other_name", "thumbnail", "url", "year", "views", "category_id"],
+                artists: ["name"],
+                category: ["id", "name"],
+            })
             .where("search", searchValue)
             .page(pagination.current as number)
             .limit(pagination.pageSize as number)
@@ -66,7 +72,7 @@ const SongPage: React.FC = () => {
     const handleTableChange = async (tablePagination: TablePaginationConfig) => {
         const queryBuilder = new Query()
             .for("songs")
-            .include("category")
+            .include(["category", "artists"])
             .where("search", searchValue)
             .page(tablePagination.current as number)
             .limit(tablePagination.pageSize as number)
@@ -133,12 +139,15 @@ const SongPage: React.FC = () => {
                     <Table rowKey={"id"} dataSource={songsTable} loading={loading} onChange={handleTableChange}
                         pagination={pagination} scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
                         <Table.Column title="ID" dataIndex="id" width={64} />
-                        <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
-                        <Table.Column title="Tên khác" dataIndex="other_name" width={300} ellipsis />
                         <Table.Column<Song> title="Ảnh đại diện" dataIndex="thumbnail" width={120}
                             render={(image: string, record) => (
                                 <img src={image} alt={record.name} style={{ maxWidth: 64 }} />
                             )} />
+                        <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
+                        <Table.Column title="Tên khác" dataIndex="other_name" width={300} ellipsis />
+                        <Table.Column title="Tác giả" dataIndex="artists" width={300} ellipsis render={( artists: Artist[]) =>
+                            artists.map(artist => artist.name).join(", ")
+                        } />
                         <Table.Column title="Năm phát hành" dataIndex="year" width={120} />
                         <Table.Column title="Lượt nghe" dataIndex="views" width={120} render={(views: number) =>
                             Intl.NumberFormat().format(views)
@@ -153,7 +162,7 @@ const SongPage: React.FC = () => {
                                     onConfirm={() => deleteSong(song)}>
                                     <Button type="danger" icon={<DeleteOutlined />} />
                                 </Popconfirm>
-                                <Link to={`/bai-hat/${song.name}`}>
+                                <Link to={`/bai-hat/${song.id}`}>
                                     <Button type="primary" icon={<EditOutlined />} />
                                 </Link>
                             </Space>
