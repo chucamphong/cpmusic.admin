@@ -9,6 +9,8 @@ import NoMatch from "pages/Error/NoMatch";
 import HomePage from "pages/Home";
 import LoginPage from "pages/Login";
 import SongPage from "pages/Song";
+import AddSongPage from "pages/Song/add";
+import EditSongPage from "pages/Song/edit";
 import UserPage from "pages/User";
 import AddUserPage from "pages/User/add";
 import EditUserPage from "pages/User/edit";
@@ -41,6 +43,12 @@ const AppContainer: React.FC = () => {
                 {/* Quản lý bài hát */}
                 <ProtectedRoute path={"/bai-hat"} action={"view"} subject={"songs"} exact>
                     <SongPage />
+                </ProtectedRoute>
+                <ProtectedRoute path={"/bai-hat/tao-bai-hat"} action={"create"} subject={"songs"} exact>
+                    <AddSongPage />
+                </ProtectedRoute>
+                <ProtectedRoute path={"/bai-hat/:id"} action={"update"} subject={"songs"} exact>
+                    <EditSongPage />
                 </ProtectedRoute>
                 {/* Xem thông tin tài khoản */}
                 <ProtectedRoute path={"/tai-khoan"} action={"view"} subject={"me"} exact>
