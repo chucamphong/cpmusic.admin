@@ -138,19 +138,23 @@ const SongPage: React.FC = () => {
                     {/* Bảng danh sách tài khản */}
                     <Table rowKey={"id"} dataSource={songsTable} loading={loading} onChange={handleTableChange}
                         pagination={pagination} scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
-                        <Table.Column title="ID" dataIndex="id" width={64} />
-                        <Table.Column<Song> title="Ảnh đại diện" dataIndex="thumbnail" width={120}
+                        <Table.Column title="ID" dataIndex="id" width={84} align="center" />
+                        <Table.Column<Song> title="Ảnh đại diện" dataIndex="thumbnail" width={120} align="center"
                             render={(image: string, record) => (
-                                <img src={image} alt={record.name} style={{ maxWidth: 64 }} />
+                                <img src={image} alt={record.name} style={{ maxWidth: 90 }} />
                             )} />
-                        <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
-                        <Table.Column title="Tên khác" dataIndex="other_name" width={300} ellipsis />
-                        <Table.Column title="Tác giả" dataIndex="artists" width={300} ellipsis render={( artists: Artist[]) =>
+                        <Table.Column title="Tên bài hát" dataIndex="name" width={300} ellipsis />
+                        <Table.Column title="Tên khác" dataIndex="other_name" width={250} ellipsis />
+                        <Table.Column title="Nghệ sĩ" dataIndex="artists" width={150} ellipsis render={( artists: Artist[]) =>
                             artists.map(artist => artist.name).join(", ")
                         } />
-                        <Table.Column title="Năm phát hành" dataIndex="year" width={120} />
-                        <Table.Column title="Lượt nghe" dataIndex="views" width={120} render={(views: number) =>
-                            Intl.NumberFormat().format(views)
+                        <Table.Column title="Năm phát hành" dataIndex="year" width={120} align="center" />
+                        <Table.Column title="Lượt nghe" dataIndex="views" width={120} align="center" render={(views: number) =>
+                            Intl.NumberFormat("vi", {
+                                // @ts-ignore
+                                notation: "compact",
+                                compactDisplay: "short",
+                            }).format(views)
                         } />
                         <Table.Column title="Thể loại" dataIndex="category" width={140} render={(category: Category) =>
                             category.name
