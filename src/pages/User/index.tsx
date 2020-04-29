@@ -10,7 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService, { UsersListResponse } from "services/usersService";
 import notification from "utils/notification";
-import { Query } from "utils/query-builder/query";
+import Query from "@chuphong/query-builder";
 
 const UserPage: React.FC = () => {
     const auth = useAuth();
@@ -47,16 +47,15 @@ const UserPage: React.FC = () => {
 
     // Xử lý sự kiện khi phân trang
     const handleTableChange = async (tablePagination: TablePaginationConfig) => {
-        await fetchUsers({
-            model: "users",
-            filters: {
-                [column]: searchValue,
-            },
-            pagination: {
-                size: tablePagination.pageSize,
-                number: tablePagination.current,
-            },
-        }, response => {
+        const query = new Query().for("users")
+            .page(tablePagination.current ?? 1)
+            .limit(tablePagination.pageSize ?? 20);
+
+        if (searchValue) {
+            query.where(column, searchValue);
+        }
+
+        await fetchUsers(query, response => {
             setPagination({
                 ...tablePagination,
                 total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
@@ -66,16 +65,15 @@ const UserPage: React.FC = () => {
 
     // Hàm tìm kiếm sử dụng debounce để delay 500ms rồi mới gửi request.
     const findUser = useRef(debounce(async (column: string, value: string) => {
-        await fetchUsers({
-            model: "users",
-            filters: {
-                [column]: value,
-            },
-            pagination: {
-                size: pagination.pageSize,
-                number: pagination.current,
-            },
-        }, response => {
+        const query = new Query().for("users")
+            .page(pagination.current as number)
+            .limit(pagination.pageSize as number);
+
+        if (value) {
+            query.where(column, value);
+        }
+
+        await fetchUsers(query, response => {
             setPagination({
                 ...pagination,
                 current: 1,                         // Reset lại phân trang về trang 1
@@ -85,16 +83,15 @@ const UserPage: React.FC = () => {
     }, 500)).current;
 
     const refreshUsersList = async () => {
-        await fetchUsers({
-            model: "users",
-            filters: {
-                [column]: searchValue,
-            },
-            pagination: {
-                size: pagination.pageSize,
-                number: pagination.current,
-            },
-        }, response => {
+        const query = new Query().for("users")
+            .page(pagination.current as number)
+            .limit(pagination.pageSize as number);
+
+        if (searchValue) {
+            query.where(column, searchValue);
+        }
+
+        await fetchUsers(query, response => {
             setPagination({
                 ...pagination,
                 total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
@@ -111,6 +108,7 @@ const UserPage: React.FC = () => {
                 message: response.data.message,
             });
         } catch (e) {
+            console.log(e);
             notification.error({
                 message: (e as AxiosError).response?.data.message,
             });

@@ -2,14 +2,13 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Space, Table } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosError, AxiosResponse } from "axios";
-import { debounce } from "lodash";
-import truncate from "lodash/truncate";
+import { debounce, truncate } from "lodash";
 import { Category, Song } from "pages/Song/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import songsService from "services/songsService";
 import notification from "utils/notification";
-import { Query } from "utils/query-builder/query";
+import Query from "@chuphong/query-builder";
 
 const SongPage: React.FC = () => {
     const history = useHistory();
@@ -41,18 +40,17 @@ const SongPage: React.FC = () => {
     };
 
     const handleTableChange = (tablePagination: TablePaginationConfig) => {
-        getSongsList({
-            model: "songs",
-            includes: ["category"],
-            filters: {
-                search: query,
-            },
-            pagination: {
-                size: tablePagination.pageSize,
-                number: tablePagination.current,
-            },
-            sort: ["-id"],
-        }, response => {
+        const queryBuilder = new Query().for("songs")
+            .include("category")
+            .page(tablePagination.current ?? 1)
+            .limit(tablePagination.pageSize ?? 20)
+            .sort("-id");
+
+        if (query) {
+            queryBuilder.where("search", query);
+        }
+
+        getSongsList(queryBuilder, response => {
             setPagination({
                 ...tablePagination,
                 total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
@@ -61,18 +59,17 @@ const SongPage: React.FC = () => {
     };
 
     const find = useRef(debounce(async (value: string) => {
-        return getSongsList({
-            model: "songs",
-            includes: ["category"],
-            filters: {
-                search: value,
-            },
-            pagination: {
-                size: pagination.pageSize,
-                number: pagination.current,
-            },
-            sort: ["-id"],
-        }, response => {
+        const queryBuilder = new Query().for("songs")
+            .include("category")
+            .page(pagination.current as number)
+            .limit(pagination.pageSize as number)
+            .sort("-id");
+
+        if (query) {
+            queryBuilder.where("search", value);
+        }
+
+        return getSongsList(queryBuilder, response => {
             setPagination({
                 ...pagination,
                 current: 1,                         // Reset lại phân trang về trang 1

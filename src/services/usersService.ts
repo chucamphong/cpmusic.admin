@@ -1,5 +1,5 @@
+import Query from "@chuphong/query-builder";
 import { User } from "modules/Auth";
-import buildQuery, { Query } from "utils/query-builder/query";
 import service from "./service";
 
 const model = "users";
@@ -27,8 +27,8 @@ export default {
     /**
      * Lấy tất cả các dữ liệu trong bảng `users` phù hợp với `query`
      */
-    get(query: Query) {
-        return service.get<UsersListResponse>(buildQuery(query));
+    get(query: Query | string) {
+        return service.get<UsersListResponse>(query.toString());
     },
     find(userId: number) {
         return service.get<User>(`/${model}/${userId}`);

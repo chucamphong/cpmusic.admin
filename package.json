@@ -5,6 +5,7 @@
     "dependencies": {
         "@casl/ability": "^4.0.5",
         "@casl/react": "^2.1.0",
+        "@chuphong/query-builder": "^1.0.11",
         "antd": "^4.1.4",
         "axios": "^0.19.2",
         "lodash": "^4.17.15",
