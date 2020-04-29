@@ -65,36 +65,33 @@ const AddUserPage: React.FC = () => {
         document.title = "Thêm tài khoản";
     }, []);
 
+    // Quay trở lại trang /thanh-vien nếu quit = true
     useEffect(() => {
         if (quit) {
             goBack();
         }
     }, [goBack, quit]);
 
-
+    // Gửi request tạo tài khoản lên server
     const submitForm = async (formData: UserWithPasswordType) => {
-        try {
-            showLoading(true);
+        showLoading(true);
 
-            const response = await usersService.create(formData as User & { password: string });
+        usersService.create(formData as Required<UserWithPasswordType>)
+            .then(response => {
+                notification.success({
+                    message: response.data.message,
+                });
 
-            notification.success({
-                message: response.data.message,
-            });
+                quitPage(true);
+            })
+            .catch((error: AxiosError) => {
+                let errors = error.response?.data.errors;
 
-            quitPage(true);
-        }
-        catch (e) {
-            const error = (e as AxiosError);
-
-            let errors = error.response?.data.errors;
-
-            notification.error({
-                message: errors[Object.keys(errors)[0]][0] ?? (e as AxiosError).response?.data.message,
-            });
-        } finally {
-            showLoading(false);
-        }
+                notification.error({
+                    message: errors[Object.keys(errors)[0]][0] ?? error.response?.data.message,
+                });
+            })
+            .finally(() => showLoading(false));
     };
 
     return (

@@ -60,7 +60,7 @@ const UserPage: React.FC = () => {
     };
 
     // Hàm tìm kiếm sử dụng debounce để delay 500ms rồi mới gửi request.
-    const findUser = useRef(debounce(async (column: string, value: string) => {
+    const find = useRef(debounce(async (column: string, value: string) => {
         const query = new Query().for("users")
             .where(column, value)
             .page(pagination.current as number)
@@ -98,7 +98,6 @@ const UserPage: React.FC = () => {
                 message: response.data.message,
             });
         } catch (e) {
-            console.log(e);
             notification.error({
                 message: (e as AxiosError).response?.data.message,
             });
@@ -114,8 +113,8 @@ const UserPage: React.FC = () => {
 
     // Tìm kiếm
     useEffect(() => {
-        findUser(column, searchValue);
-    }, [searchValue, column, findUser]);
+        (async () => find(column, searchValue))();
+    }, [searchValue, column, find]);
 
     return (
         <Space direction={"vertical"} style={{ width: "100%" }}>
