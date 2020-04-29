@@ -1,4 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import Query from "@chuphong/query-builder";
 import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Space, Table } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosError, AxiosResponse } from "axios";
@@ -8,11 +9,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import songsService from "services/songsService";
 import notification from "utils/notification";
-import Query from "@chuphong/query-builder";
 
 const SongPage: React.FC = () => {
     const history = useHistory();
-    const [query, setQuery] = useState("");
+    const [searchValue, setSearchValue] = useState("");
     const [songsTable, setSongsTable] = useState([]);
     const [pagination, setPagination] = useState<TablePaginationConfig>({
         current: 1,
@@ -42,13 +42,10 @@ const SongPage: React.FC = () => {
     const handleTableChange = (tablePagination: TablePaginationConfig) => {
         const queryBuilder = new Query().for("songs")
             .include("category")
+            .where("search", searchValue)
             .page(tablePagination.current ?? 1)
             .limit(tablePagination.pageSize ?? 20)
             .sort("-id");
-
-        if (query) {
-            queryBuilder.where("search", query);
-        }
 
         getSongsList(queryBuilder, response => {
             setPagination({
@@ -61,13 +58,10 @@ const SongPage: React.FC = () => {
     const find = useRef(debounce(async (value: string) => {
         const queryBuilder = new Query().for("songs")
             .include("category")
+            .where("search", value)
             .page(pagination.current as number)
             .limit(pagination.pageSize as number)
             .sort("-id");
-
-        if (query) {
-            queryBuilder.where("search", value);
-        }
 
         return getSongsList(queryBuilder, response => {
             setPagination({
@@ -85,9 +79,9 @@ const SongPage: React.FC = () => {
 
     // Lấy dữ liệu cho lần đầu tiên và đảm nhận luôn chức năng tìm kiếm
     useEffect(() => {
-        (async () => await find(query))();
+        (async () => await find(searchValue))();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [query]);
+    }, [searchValue]);
 
     return (
         <Space direction={"vertical"} style={{ width: "100%" }}>
@@ -105,7 +99,7 @@ const SongPage: React.FC = () => {
             ]} style={{ padding: 0 }}>
                 <Space direction={"vertical"} style={{ width: "100%" }}>
                     {/* Thanh tìm kiếm */}
-                    <Input.Search value={query} onChange={(e) => setQuery(e.target.value)} maxLength={255}
+                    <Input.Search value={searchValue} onChange={(e) => setSearchValue(e.target.value)} maxLength={255}
                         placeholder="Tìm kiếm theo tên bài hát, nghệ sĩ, thể loại" />
 
                     {/* Bảng danh sách tài khản */}
@@ -129,7 +123,8 @@ const SongPage: React.FC = () => {
                             <Space>
                                 <Popconfirm
                                     title={`Bạn có muốn xóa bài hát ${truncate(record.name, { length: 10 })}?`}
-                                    onConfirm={() => {}}>
+                                    onConfirm={() => {
+                                    }}>
                                     <Button type="danger" icon={<DeleteOutlined />} />
                                 </Popconfirm>
                                 <Link to={`/bai-hat/${record.name}`}>

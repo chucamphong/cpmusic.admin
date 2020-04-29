@@ -1,16 +1,15 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import Query from "@chuphong/query-builder";
 import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Select, Space, Table, Tag } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosError, AxiosResponse } from "axios";
-import debounce from "lodash/debounce";
-import truncate from "lodash/truncate";
+import { debounce, truncate } from "lodash";
 import { useAuth, User } from "modules/Auth";
 import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import usersService, { UsersListResponse } from "services/usersService";
 import notification from "utils/notification";
-import Query from "@chuphong/query-builder";
 
 const UserPage: React.FC = () => {
     const auth = useAuth();
@@ -48,12 +47,9 @@ const UserPage: React.FC = () => {
     // Xử lý sự kiện khi phân trang
     const handleTableChange = async (tablePagination: TablePaginationConfig) => {
         const query = new Query().for("users")
-            .page(tablePagination.current ?? 1)
-            .limit(tablePagination.pageSize ?? 20);
-
-        if (searchValue) {
-            query.where(column, searchValue);
-        }
+            .where(column, searchValue)
+            .page(tablePagination.current as number)
+            .limit(tablePagination.pageSize as number);
 
         await fetchUsers(query, response => {
             setPagination({
@@ -66,12 +62,9 @@ const UserPage: React.FC = () => {
     // Hàm tìm kiếm sử dụng debounce để delay 500ms rồi mới gửi request.
     const findUser = useRef(debounce(async (column: string, value: string) => {
         const query = new Query().for("users")
+            .where(column, value)
             .page(pagination.current as number)
             .limit(pagination.pageSize as number);
-
-        if (value) {
-            query.where(column, value);
-        }
 
         await fetchUsers(query, response => {
             setPagination({
@@ -84,12 +77,9 @@ const UserPage: React.FC = () => {
 
     const refreshUsersList = async () => {
         const query = new Query().for("users")
+            .where(column, searchValue)
             .page(pagination.current as number)
             .limit(pagination.pageSize as number);
-
-        if (searchValue) {
-            query.where(column, searchValue);
-        }
 
         await fetchUsers(query, response => {
             setPagination({
