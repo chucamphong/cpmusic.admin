@@ -4,7 +4,7 @@ import service from "services/service";
 const model = "songs";
 
 export default {
-    get(query: Query) {
+    get(query: string | Query) {
         return service.get(query.toString());
     },
     remove(songId: number) {

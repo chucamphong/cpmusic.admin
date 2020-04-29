@@ -2,11 +2,12 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Space, Table } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
-import { AxiosError } from "axios";
-import { debounce, truncate } from "lodash";
+import { AxiosError, AxiosResponse } from "axios";
+import { truncate } from "lodash";
 import { Category, Song } from "pages/Song/types";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
+import { useDebounce } from "react-use";
 import songsService from "services/songsService";
 import notification from "utils/notification";
 
@@ -21,11 +22,10 @@ const SongPage: React.FC = () => {
     });
     const [loading, showLoading] = useState(true);
 
+    // Quay trở lại trang /bai-hat
     const goBack = () => history.push("/bai-hat");
 
-    /**
-     * @description Lấy danh sách bài hát theo query
-     */
+    // Lấy danh sách bài hát theo query
     const getSongsList = async (query: Query) => {
         try {
             showLoading(true);
@@ -41,26 +41,52 @@ const SongPage: React.FC = () => {
         }
     };
 
+    // Tìm kiềm bái hát
+    const searchSong = async () => {
+        const query = new Query().for("songs")
+            .include("category")
+            .where("search", searchValue)
+            .page(pagination.current as number)
+            .limit(pagination.pageSize as number)
+            .sort("-id");
+
+        // Không cần try...catch vì đã bắt exception trong hàm getSongsList
+        const response = await getSongsList(query) as AxiosResponse;
+        setPagination({
+            ...pagination,
+            current: 1,                          // Reset lại phân trang về trang 1
+            total: response.data.meta.total,     // Cập nhật lại tổng số tài khoản để phân trang
+        });
+    };
+
+    // Làm mới dữ liệu trong bảng bằng cách tìm kiếm lại
+    const refreshTable = async () => await searchSong();
+
+    // Gửi request lấy dữ liệu nếu table có sự thay đổi (chuyển trang,...)
     const handleTableChange = async (tablePagination: TablePaginationConfig) => {
-        const queryBuilder = new Query().for("songs")
+        const queryBuilder = new Query()
+            .for("songs")
             .include("category")
             .where("search", searchValue)
             .page(tablePagination.current as number)
             .limit(tablePagination.pageSize as number)
             .sort("-id");
 
-        const response = await getSongsList(queryBuilder);
+        // Không cần try...catch vì đã bắt exception trong hàm getSongsList
+        const response = await getSongsList(queryBuilder) as AxiosResponse;
         setPagination({
             ...tablePagination,
-            total: response?.data.meta.total,
+            total: response.data.meta.total,
         });
     };
 
+    // Xóa bài hát
     const deleteSong = async (song: Song) => {
         try {
             showLoading(true);
             const response = await songsService.remove(song.id);
-            await refresh();
+            // Cập nhật lại dữ liệu trong bảng
+            await refreshTable();
             notification.success({
                 message: response.data.message,
             });
@@ -73,49 +99,16 @@ const SongPage: React.FC = () => {
         }
     };
 
-    const find = useRef(debounce(async (value: string) => {
-        const queryBuilder = new Query().for("songs")
-            .include("category")
-            .where("search", value)
-            .page(pagination.current as number)
-            .limit(pagination.pageSize as number)
-            .sort("-id");
-
-        const response = await getSongsList(queryBuilder);
-        setPagination({
-            ...pagination,
-            current: 1,                         // Reset lại phân trang về trang 1
-            total: response?.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
-        });
-    }, 500)).current;
-
-    const refresh = async () => {
-        const queryBuilder = new Query()
-            .for("songs")
-            .include("category")
-            .where("search", searchValue)
-            .page(pagination.current as number)
-            .limit(pagination.pageSize as number)
-            .sort("-id");
-
-        const response = await getSongsList(queryBuilder);
-        setPagination({
-            ...pagination,
-            current: 1,                         // Reset lại phân trang về trang 1
-            total: response?.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
-        });
-    };
-
     // Cập nhật tiêu đề trang web
     useEffect(() => {
         document.title = "Quản lý bài hát";
     }, []);
 
-    // Lấy dữ liệu cho lần đầu tiên và đảm nhận luôn chức năng tìm kiếm
-    useEffect(() => {
-        (async () => await find(searchValue))();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchValue]);
+    /**
+     * Lấy dữ liệu cho lần đầu tiên và đảm nhận luôn chức năng tìm kiếm
+     * Lấy giá trị cuối cùng của searchValue sau 500ms thì mới gửi request lên server lại
+     */
+    useDebounce(searchSong, 500, [searchValue]);
 
     return (
         <Space direction={"vertical"} style={{ width: "100%" }}>
@@ -123,11 +116,11 @@ const SongPage: React.FC = () => {
                 <Breadcrumb.Item>
                     <Link to={"/"}>Trang chủ</Link>
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Thành viên</Breadcrumb.Item>
+                <Breadcrumb.Item>Bài hát</Breadcrumb.Item>
             </Breadcrumb>
 
             <PageHeader title="Bài Hát" onBack={goBack} extra={[
-                <Link to="/thanh-vien/tao-bai-hat" key="create">
+                <Link to="/bai-hat/tao-bai-hat" key="create">
                     <Button type="primary" icon={<PlusOutlined />}>Thêm</Button>
                 </Link>,
             ]} style={{ padding: 0 }}>
