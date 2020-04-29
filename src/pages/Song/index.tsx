@@ -2,7 +2,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Space, Table } from "antd";
 import { TablePaginationConfig } from "antd/lib/table/interface";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosError } from "axios";
 import { debounce, truncate } from "lodash";
 import { Category, Song } from "pages/Song/types";
 import React, { useEffect, useRef, useState } from "react";
@@ -23,36 +23,54 @@ const SongPage: React.FC = () => {
 
     const goBack = () => history.push("/bai-hat");
 
-    const getSongsList = (query: Query, callback: (response: AxiosResponse) => void) => {
-        showLoading(true);
-
-        songsService.get(query)
-            .then(response => {
-                setSongsTable(response.data.data);
-                callback(response);
-            })
-            .catch((e: AxiosError) => {
-                notification.error({
-                    message: (e as AxiosError).response?.data.message,
-                });
-            })
-            .finally(() => showLoading(false));
+    /**
+     * @description Lấy danh sách bài hát theo query
+     */
+    const getSongsList = async (query: Query) => {
+        try {
+            showLoading(true);
+            const response = await songsService.get(query);
+            setSongsTable(response.data.data);
+            return response;
+        } catch (e) {
+            notification.error({
+                message: (e as AxiosError).response?.data.message,
+            });
+        } finally {
+            showLoading(false);
+        }
     };
 
-    const handleTableChange = (tablePagination: TablePaginationConfig) => {
+    const handleTableChange = async (tablePagination: TablePaginationConfig) => {
         const queryBuilder = new Query().for("songs")
             .include("category")
             .where("search", searchValue)
-            .page(tablePagination.current ?? 1)
-            .limit(tablePagination.pageSize ?? 20)
+            .page(tablePagination.current as number)
+            .limit(tablePagination.pageSize as number)
             .sort("-id");
 
-        getSongsList(queryBuilder, response => {
-            setPagination({
-                ...tablePagination,
-                total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
-            });
+        const response = await getSongsList(queryBuilder);
+        setPagination({
+            ...tablePagination,
+            total: response?.data.meta.total,
         });
+    };
+
+    const deleteSong = async (song: Song) => {
+        try {
+            showLoading(true);
+            const response = await songsService.remove(song.id);
+            await refresh();
+            notification.success({
+                message: response.data.message,
+            });
+        } catch (e) {
+            notification.error({
+                message: (e as AxiosError).response?.data.message,
+            });
+        } finally {
+            showLoading(false);
+        }
     };
 
     const find = useRef(debounce(async (value: string) => {
@@ -63,14 +81,30 @@ const SongPage: React.FC = () => {
             .limit(pagination.pageSize as number)
             .sort("-id");
 
-        return getSongsList(queryBuilder, response => {
-            setPagination({
-                ...pagination,
-                current: 1,                         // Reset lại phân trang về trang 1
-                total: response.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
-            });
+        const response = await getSongsList(queryBuilder);
+        setPagination({
+            ...pagination,
+            current: 1,                         // Reset lại phân trang về trang 1
+            total: response?.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
         });
     }, 500)).current;
+
+    const refresh = async () => {
+        const queryBuilder = new Query()
+            .for("songs")
+            .include("category")
+            .where("search", searchValue)
+            .page(pagination.current as number)
+            .limit(pagination.pageSize as number)
+            .sort("-id");
+
+        const response = await getSongsList(queryBuilder);
+        setPagination({
+            ...pagination,
+            current: 1,                         // Reset lại phân trang về trang 1
+            total: response?.data.meta.total,    // Cập nhật lại tổng số tài khoản để phân trang
+        });
+    };
 
     // Cập nhật tiêu đề trang web
     useEffect(() => {
@@ -119,15 +153,14 @@ const SongPage: React.FC = () => {
                         <Table.Column title="Thể loại" dataIndex="category" width={140} render={(category: Category) =>
                             category.name
                         } />
-                        <Table.Column<Song> title="Chức năng" width={150} align="center" render={(_, record) => (
+                        <Table.Column<Song> title="Chức năng" width={150} align="center" render={(_, song) => (
                             <Space>
                                 <Popconfirm
-                                    title={`Bạn có muốn xóa bài hát ${truncate(record.name, { length: 10 })}?`}
-                                    onConfirm={() => {
-                                    }}>
+                                    title={`Bạn có muốn xóa bài hát ${truncate(song.name, { length: 10 })}?`}
+                                    onConfirm={() => deleteSong(song)}>
                                     <Button type="danger" icon={<DeleteOutlined />} />
                                 </Popconfirm>
-                                <Link to={`/bai-hat/${record.name}`}>
+                                <Link to={`/bai-hat/${song.name}`}>
                                     <Button type="primary" icon={<EditOutlined />} />
                                 </Link>
                             </Space>
