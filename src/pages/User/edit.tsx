@@ -55,7 +55,7 @@ const EditUserPage: React.FC = () => {
 
     useEffect(() => {
         // Cập nhật tiêu đề trang web
-        document.title = "Chỉnh sửa thành viên";
+        document.title = "Chỉnh sửa tài khoản";
 
         // Lấy thông tin tài khoản có id là params.id
         (async () => {
