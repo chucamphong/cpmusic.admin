@@ -1,7 +1,8 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Space, Table } from "antd";
-import { TablePaginationConfig } from "antd/lib/table/interface";
+import { PaginationConfig } from "antd/es/pagination";
+import { TablePaginationConfig } from "antd/lib/table";
 import { AxiosError, AxiosResponse } from "axios";
 import { truncate } from "lodash";
 import { Artist } from "pages/Artists/types";
@@ -16,7 +17,7 @@ const SongPage: React.FC = () => {
     const history = useHistory();
     const [searchValue, setSearchValue] = useState("");
     const [songsTable, setSongsTable] = useState([]);
-    const [pagination, setPagination] = useState<TablePaginationConfig>({
+    const [pagination, setPagination] = useState<PaginationConfig>({
         current: 1,
         pageSize: 20,
         showSizeChanger: false,
@@ -69,7 +70,7 @@ const SongPage: React.FC = () => {
     const refreshTable = async () => await searchSong();
 
     // Gửi request lấy dữ liệu nếu table có sự thay đổi (chuyển trang,...)
-    const handleTableChange = async (tablePagination: TablePaginationConfig) => {
+    const handleTableChange = async (tablePagination: PaginationConfig) => {
         const queryBuilder = new Query()
             .for("songs")
             .include(["category", "artists"])
@@ -136,8 +137,8 @@ const SongPage: React.FC = () => {
                         placeholder="Tìm kiếm theo tên bài hát, nghệ sĩ, thể loại" />
 
                     {/* Bảng danh sách tài khản */}
-                    <Table rowKey={"id"} dataSource={songsTable} loading={loading} onChange={handleTableChange}
-                        pagination={pagination} scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
+                    <Table rowKey={"id"} dataSource={songsTable} loading={loading} onChange={(pagination) => handleTableChange(pagination)}
+                        pagination={pagination as TablePaginationConfig} scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
                         <Table.Column title="ID" dataIndex="id" width={84} align="center" />
                         <Table.Column<Song> title="Ảnh đại diện" dataIndex="thumbnail" width={120} align="center"
                             render={(image: string, record) => (
@@ -164,7 +165,7 @@ const SongPage: React.FC = () => {
                                 <Popconfirm
                                     title={`Bạn có muốn xóa bài hát ${truncate(song.name, { length: 10 })}?`}
                                     onConfirm={() => deleteSong(song)}>
-                                    <Button type="danger" icon={<DeleteOutlined />} />
+                                    <Button type="primary" icon={<DeleteOutlined />} danger />
                                 </Popconfirm>
                                 <Link to={`/bai-hat/${song.id}`}>
                                     <Button type="primary" icon={<EditOutlined />} />

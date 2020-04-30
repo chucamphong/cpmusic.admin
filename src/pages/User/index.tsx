@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Select, Space, Table, Tag } from "antd";
+import { PaginationConfig } from "antd/es/pagination";
 import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosError, AxiosResponse } from "axios";
 import { debounce, truncate } from "lodash";
@@ -19,7 +20,7 @@ const UserPage: React.FC = () => {
     const [loading, showLoading] = useState(true);
     const [searchValue, setSearchValue] = useState("");
     const [column, setColumn] = useState("name");
-    const [pagination, setPagination] = useState<TablePaginationConfig>({
+    const [pagination, setPagination] = useState<PaginationConfig>({
         current: 1,
         pageSize: 20,
         showSizeChanger: false,
@@ -45,7 +46,7 @@ const UserPage: React.FC = () => {
     };
 
     // Xử lý sự kiện khi phân trang
-    const handleTableChange = async (tablePagination: TablePaginationConfig) => {
+    const handleTableChange = async (tablePagination: PaginationConfig) => {
         const query = new Query().for("users")
             .where(column, searchValue)
             .page(tablePagination.current as number)
@@ -142,7 +143,7 @@ const UserPage: React.FC = () => {
 
                     {/* Bảng danh sách tài khản */}
                     <Table rowKey={"id"} dataSource={usersTable} loading={loading}
-                        pagination={pagination} onChange={handleTableChange}
+                        pagination={pagination as TablePaginationConfig} onChange={(pagination) => handleTableChange(pagination)}
                         scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
                         <Table.Column title="ID" dataIndex="id" width={64} />
                         <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
@@ -161,8 +162,8 @@ const UserPage: React.FC = () => {
                                     title={`Bạn có muốn xóa thành viên ${truncate(record.name, { length: 10 })}?`}
                                     onConfirm={() => deleteUser(record)}
                                     disabled={auth.isMe(record)}>
-                                    <Button type="danger" icon={<DeleteOutlined />}
-                                        disabled={auth.user?.id === record.id} />
+                                    <Button type="primary" icon={<DeleteOutlined />}
+                                        disabled={auth.user?.id === record.id} danger />
                                 </Popconfirm>
                                 <Link to={`/thanh-vien/${record.id}`}>
                                     <Button type="primary" icon={<EditOutlined />} />
