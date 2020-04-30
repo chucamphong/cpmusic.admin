@@ -33,7 +33,7 @@ describe("Kiểm tra phân quyền của phần quản lý tài khoản", () => 
 
     describe("Kiểm tra trang tạo tài khoản", () => {
         test("Bắt đăng nhập nếu chưa đăng nhập", async () => {
-            await renderPage(initialState, "/thanh-vien");
+            await renderPage(initialState, "/thanh-vien/tao-tai-khoan");
 
             expect(document.title).toEqual("Đăng nhập");
         });
@@ -46,13 +46,40 @@ describe("Kiểm tra phân quyền của phần quản lý tài khoản", () => 
 
             await renderPage(store, "/thanh-vien/tao-tai-khoan");
 
-            expect(document.title).toMatch(/Thêm tài khoản/i);
+            expect(document.title).toEqual("Thêm tài khoản");
         });
 
         test("Báo lỗi khi không có quyền truy cập vào trang tạo tài khoản", async () => {
             const store = loginWith(Role.Moderator);
 
             await renderPage(store, "/thanh-vien/tao-tai-khoan");
+
+            expect(document.title).toEqual("Không thể truy cập");
+        });
+    });
+
+    describe("Kiểm tra sửa tài khoản", () => {
+        test("Bắt đăng nhập nếu chưa đăng nhập", async () => {
+            await renderPage(initialState, "/thanh-vien/1");
+
+            expect(document.title).toEqual("Đăng nhập");
+        });
+
+        test("Có thể truy cập truy cập trang sửa tài khoản", async () => {
+            const store = loginWith(Role.Moderator, [{
+                action: "update",
+                subject: "users",
+            }]);
+
+            await renderPage(store, "/thanh-vien/1");
+
+            expect(document.title).toEqual("Chỉnh sửa tài khoản");
+        });
+
+        test("Báo lỗi khi không có quyền truy cập vào trang sửa tài khoản", async () => {
+            const store = loginWith(Role.Moderator);
+
+            await renderPage(store, "/thanh-vien/1");
 
             expect(document.title).toEqual("Không thể truy cập");
         });
