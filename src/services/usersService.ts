@@ -1,34 +1,15 @@
 import Query from "@chuphong/query-builder";
 import { User } from "modules/Auth";
-import service from "./service";
+import service, { APIPaginatedResponse } from "./service";
 
 const model = "users";
-
-export type UsersListResponse = {
-    data: User[],
-    links: {
-        first: string,
-        last: string | null,
-        next: string | null,
-        prev: string | null
-    },
-    meta: {
-        current_page: number,
-        from: number,
-        last_page: number,
-        path: string,
-        per_page: number,
-        to: number,
-        total: number
-    }
-};
 
 export default {
     /**
      * Lấy tất cả các dữ liệu trong bảng `users` phù hợp với `query`
      */
     get(query: Query | string) {
-        return service.get<UsersListResponse>(query.toString());
+        return service.get<APIPaginatedResponse<User>>(query.toString());
     },
     find(userId: number) {
         return service.get<User>(`/${model}/${userId}`);

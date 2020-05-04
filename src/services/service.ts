@@ -44,4 +44,28 @@ axiosInstance.interceptors.response.use(response => {
     return Promise.reject(error);
 });
 
+export interface APIResponse {
+    message: string;
+    errors?: string[];
+}
+
+export interface APIPaginatedResponse<T extends Object> {
+    data: T[],
+    links: {
+        first: string,
+        last: string | null,
+        next: string | null,
+        prev: string | null
+    },
+    meta: {
+        current_page: number,
+        from: number,
+        last_page: number,
+        path: string,
+        per_page: number,
+        to: number,
+        total: number
+    }
+}
+
 export default axiosInstance;

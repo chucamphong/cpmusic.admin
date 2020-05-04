@@ -9,7 +9,8 @@ import { useAuth, User } from "modules/Auth";
 import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import usersService, { UsersListResponse } from "services/usersService";
+import { APIPaginatedResponse } from "services/service";
+import usersService from "services/usersService";
 import notification from "utils/notification";
 
 const UserPage: React.FC = () => {
@@ -30,7 +31,7 @@ const UserPage: React.FC = () => {
     const goBack = () => history.push("/thanh-vien");
 
     // Thực hiện lấy danh sách tài khoản thỏa mãn query
-    const fetchUsers = async (query: Query, callback: (response: AxiosResponse<UsersListResponse>) => void) => {
+    const fetchUsers = async (query: Query, callback: (response: AxiosResponse<APIPaginatedResponse<User>>) => void) => {
         try {
             showLoading(true);
             const response = await usersService.get(query);
