@@ -10,7 +10,7 @@ import { MemoryRouter } from "react-router-dom";
 import { RootState } from "store/types";
 import { ThemeProvider } from "styled-components";
 import mockStore, { mockState as state } from "tests/mocks/store";
-import theme from "utils/theme";
+import theme from "theme";
 
 async function render(store: ReturnType<typeof mockStore>, url: string) {
     await act(async () => {

@@ -1,4 +1,5 @@
-import axios, { AxiosError, AxiosTransformer } from "axios";
+import Query from "@chuphong/query-builder";
+import axios, { AxiosError, AxiosInstance, AxiosTransformer } from "axios";
 
 const baseURL = "http://api.cpmusic.com/api";
 
@@ -65,6 +66,42 @@ export interface APIPaginatedResponse<T extends Object> {
         per_page: number,
         to: number,
         total: number
+    }
+}
+
+export class Service<T extends Object> {
+    protected model: string;
+    protected http: AxiosInstance = axiosInstance;
+
+    constructor(model: string) {
+        this.model = model;
+    }
+
+    protected url(...params: Parameters<any>) {
+        return [
+            this.model,
+            params.join("/"),
+        ].filter(Boolean).join("/");
+    }
+
+    public get(query: string | Query) {
+        return this.http.get<APIPaginatedResponse<T>>(query.toString());
+    }
+
+    public find(entityId: number) {
+        return this.http.get<T>(this.url(entityId));
+    }
+
+    public create(entity: Partial<T>) {
+        return this.http.post(this.url(), entity);
+    }
+
+    public update(entityId: number, data: Partial<T>) {
+        return this.http.patch(this.url(entityId), data);
+    }
+
+    public remove(entityId: number) {
+        return this.http.delete(this.url(entityId));
     }
 }
 

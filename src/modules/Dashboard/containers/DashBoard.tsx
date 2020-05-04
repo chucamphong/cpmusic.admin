@@ -1,4 +1,4 @@
-import { HomeOutlined, UserOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import { HomeOutlined, PlayCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { useAbility } from "@casl/react";
 import { Dropdown, Menu } from "antd";
 import { useAuth } from "modules/Auth";
@@ -8,11 +8,11 @@ import Layout from "modules/Common/components/Layout";
 import Logo from "modules/Dashboard/components/Logo";
 import Overlay from "modules/Dashboard/components/Overlay";
 import StyledMenuOutlined from "modules/Dashboard/components/StyledMenuOutlined";
+import notification from "modules/Notification/notification";
 import React, { MouseEvent, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useMedia } from "react-use";
-import MyTheme from "utils/theme";
-import notification from "utils/notification";
+import MyTheme from "theme";
 
 const siderWidth = MyTheme.sider.width;
 

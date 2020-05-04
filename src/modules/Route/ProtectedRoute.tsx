@@ -1,5 +1,5 @@
 import { useAbility } from "@casl/react";
-import { useAuth, Role } from "modules/Auth";
+import { Role, useAuth } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import DashBoardContainer from "modules/Dashboard/containers/DashBoard";
 import AccessDenied from "pages/Error/AccessDenied";

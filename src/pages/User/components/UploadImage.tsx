@@ -3,32 +3,28 @@ import { Space, Typography, Upload } from "antd";
 import { UploadChangeParam } from "antd/es/upload";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import React, { useState } from "react";
-import usersService from "services/usersService";
-import styled from "styled-components";
+import UserService from "services/userService";
 
 type Props = {
     defaultImage?: string;
     onSuccess?: (imageUrl: string) => void;
 };
 
-const StyledImage = styled.img`
-    max-width: 84px;
-`;
-
 const UploadImage: React.FC<Props> = ({ defaultImage, onSuccess }) => {
+    const userService = new UserService();
     const [loading, showLoading] = useState(false);
     const [currentImage, setCurrentImage] = useState("");
 
-    function uploadAvatar(options: RcCustomRequestOptions) {
+    function upload(options: RcCustomRequestOptions) {
         const data = new FormData();
         data.append("file", options.file);
 
-        return usersService.uploadAvatar(data)
+        return userService.uploadAvatar(data)
             .then(res => options.onSuccess(res.data, options.file))
             .catch(err => options.onError(err));
     }
 
-    function handleUploadAvatar(info: UploadChangeParam) {
+    function handleUpload(info: UploadChangeParam) {
         if (info.file.status === "uploading") {
             showLoading(true);
         }
@@ -52,10 +48,10 @@ const UploadImage: React.FC<Props> = ({ defaultImage, onSuccess }) => {
     const hasImage: boolean = !!currentImage || !!defaultImage;
 
     return (
-        <Upload customRequest={uploadAvatar} onChange={handleUploadAvatar} showUploadList={false}
-            listType="picture-card" accept=".jpeg,.png,.jpg">
+        <Upload customRequest={upload} onChange={handleUpload} showUploadList={false} listType="picture-card"
+            accept=".jpeg,.png,.jpg">
             {hasImage && !loading ?
-                <StyledImage src={currentImage || defaultImage} alt="Avatar" /> :
+                <img src={currentImage || defaultImage} alt="Avatar" style={{ maxWidth: 84 }} /> :
                 uploadButton
             }
         </Upload>

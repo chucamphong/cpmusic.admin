@@ -2,21 +2,19 @@ import { useAbility } from "@casl/react";
 import { Breadcrumb, Button, Col, Form, Input, PageHeader, Row, Select, Space } from "antd";
 import { Rule } from "antd/es/form";
 import { AxiosError } from "axios";
+import { difference } from "helpers";
 import { has, isEmpty } from "lodash";
 import { useAuth, User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
+import notification from "modules/Notification/notification";
 import UploadImage from "pages/User/components/UploadImage";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import usersService from "services/usersService";
-import { difference } from "utils/helpers";
-import notification from "utils/notification";
+import UserService from "services/userService";
 
 type ParamTypes = {
     id: string;
 };
-
-type UserWithPasswordType = Partial<User & { password: string }>;
 
 /**
  * Tạo bộ quy tắc để kiểm tra dữ liệu khi nhập form
@@ -46,6 +44,7 @@ const rules: ArrayDictionary<Rule> = {
 const EditUserPage: React.FC = () => {
     const auth = useAuth();
     const history = useHistory();
+    const userService = new UserService();
     const [form] = Form.useForm();
     const ability = useAbility(AbilityContext);
     const params = useParams<ParamTypes>();
@@ -60,7 +59,7 @@ const EditUserPage: React.FC = () => {
         // Lấy thông tin tài khoản có id là params.id
         (async () => {
             try {
-                const response = await usersService.find(+params.id);
+                const response = await userService.find(+params.id);
                 setUser(response.data);
             } catch (e) {
                 notification.error({
@@ -80,9 +79,9 @@ const EditUserPage: React.FC = () => {
 
     const goBack = () => history.push("/thanh-vien");
 
-    const submitForm = async (formData: UserWithPasswordType) => {
+    const submitForm = async (formData: Partial<User>) => {
         // Lấy những trường thay đổi để gửi lên server, tránh gửi dư thừa những trường không thay đổi
-        const data = difference<UserWithPasswordType>(formData, user);
+        const data = difference<Partial<User>>(formData, user);
 
         // Trường hợp không có gì thay đổi thì không làm gì hết
         if (isEmpty(data)) {
@@ -95,7 +94,7 @@ const EditUserPage: React.FC = () => {
         try {
             showLoading(true);
             // Gửi request
-            const response = await usersService.update(+params.id, data);
+            const response = await userService.update(+params.id, data);
 
             // Nếu thay đổi mật khẩu hoặc chức vụ của bản thân thì sẽ bị logout ra để cập nhật lại dữ liệu
             if (auth.isMe(user?.id) && (has(data, "password") || has(data, "role"))) {

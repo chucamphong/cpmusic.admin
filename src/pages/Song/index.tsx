@@ -5,13 +5,13 @@ import { PaginationConfig } from "antd/es/pagination";
 import { TablePaginationConfig } from "antd/lib/table";
 import { AxiosError, AxiosResponse } from "axios";
 import { truncate } from "lodash";
+import notification from "modules/Notification/notification";
 import { Artist } from "pages/Artists/types";
 import { Category, Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDebounce } from "react-use";
 import songsService from "services/songsService";
-import notification from "utils/notification";
 
 const SongPage: React.FC = () => {
     const history = useHistory();

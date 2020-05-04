@@ -3,7 +3,7 @@ import NoMatch from "pages/Error/NoMatch";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import theme from "utils/theme";
+import theme from "theme";
 
 describe("Kiểm tra trang báo lỗi", () => {
     beforeEach(() => {

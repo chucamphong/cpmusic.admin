@@ -1,4 +1,4 @@
-import { Tag, Typography, Space } from "antd";
+import { Space, Tag, Typography } from "antd";
 import { useAuth } from "modules/Auth";
 import React from "react";
 

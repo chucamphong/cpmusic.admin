@@ -1,5 +1,4 @@
-import { isNumber, isUndefined } from "lodash";
-import isEqual from "lodash/isEqual";
+import { isEqual, isNumber, isUndefined } from "lodash";
 import { actions, Role, User } from "modules/Auth";
 import { useDispatch } from "react-redux";
 import useSelector from "store/hooks/useSelector";

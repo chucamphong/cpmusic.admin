@@ -7,13 +7,13 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import store from "store/store";
 import { ThemeProvider } from "styled-components";
-import myTheme from "utils/theme";
+import theme from "theme";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
-            <ThemeProvider theme={myTheme}>
+            <ThemeProvider theme={theme}>
                 <ConfigProvider locale={vi} componentSize={"middle"} space={{ size: "middle" }}>
                     <AppContainer />
                 </ConfigProvider>

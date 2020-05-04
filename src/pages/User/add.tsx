@@ -4,13 +4,11 @@ import { Rule } from "antd/es/form";
 import { AxiosError } from "axios";
 import { User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
+import notification from "modules/Notification/notification";
 import UploadImage from "pages/User/components/UploadImage";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import usersService from "services/usersService";
-import notification from "utils/notification";
-
-type UserWithPasswordType = Partial<User & { password: string }>;
+import UserService from "services/userService";
 
 /**
  * Tạo bộ quy tắc để kiểm tra dữ liệu khi nhập form
@@ -73,10 +71,10 @@ const AddUserPage: React.FC = () => {
     }, [goBack, quit]);
 
     // Gửi request tạo tài khoản lên server
-    const submitForm = async (formData: UserWithPasswordType) => {
+    const submitForm = async (formData: Partial<User>) => {
         showLoading(true);
 
-        usersService.create(formData as Required<UserWithPasswordType>)
+        new UserService().create(formData)
             .then(response => {
                 notification.success({
                     message: response.data.message,

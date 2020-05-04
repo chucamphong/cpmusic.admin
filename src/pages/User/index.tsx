@@ -6,16 +6,17 @@ import { TablePaginationConfig } from "antd/lib/table/interface";
 import { AxiosError, AxiosResponse } from "axios";
 import { debounce, truncate } from "lodash";
 import { useAuth, User } from "modules/Auth";
+import notification from "modules/Notification/notification";
 import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { APIPaginatedResponse } from "services/service";
-import usersService from "services/usersService";
-import notification from "utils/notification";
+import UserService from "services/userService";
 
 const UserPage: React.FC = () => {
     const auth = useAuth();
     const history = useHistory();
+    const userService = new UserService();
 
     const [usersTable, setUsersTable] = useState<UserList>([]);
     const [loading, showLoading] = useState(true);
@@ -34,7 +35,7 @@ const UserPage: React.FC = () => {
     const fetchUsers = async (query: Query, callback: (response: AxiosResponse<APIPaginatedResponse<User>>) => void) => {
         try {
             showLoading(true);
-            const response = await usersService.get(query);
+            const response = await userService.get(query);
             setUsersTable(response.data.data);
             callback(response);
         } catch (e) {
@@ -94,7 +95,7 @@ const UserPage: React.FC = () => {
     const deleteUser = async (user: User) => {
         try {
             showLoading(true);
-            const response = await usersService.remove(user.id);
+            const response = await userService.remove(user.id);
             await refreshUsersList();
             notification.success({
                 message: response.data.message,
@@ -144,7 +145,8 @@ const UserPage: React.FC = () => {
 
                     {/* Bảng danh sách tài khản */}
                     <Table rowKey={"id"} dataSource={usersTable} loading={loading}
-                        pagination={pagination as TablePaginationConfig} onChange={(pagination) => handleTableChange(pagination)}
+                        pagination={pagination as TablePaginationConfig}
+                        onChange={(pagination) => handleTableChange(pagination)}
                         scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
                         <Table.Column title="ID" dataIndex="id" width={64} />
                         <Table.Column title="Họ tên" dataIndex="name" width={300} ellipsis />
