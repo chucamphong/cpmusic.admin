@@ -68,5 +68,8 @@
             "last 1 samsung version",
             "last 1 edge version"
         ]
+    },
+    "resolutions": {
+        "moment": "2.24.0"
     }
 }
