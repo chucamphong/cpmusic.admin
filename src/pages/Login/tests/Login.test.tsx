@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import theme from "config/theme";
 import { noop } from "helpers";
 import App from "modules/App/containers/App";
 import React from "react";
@@ -6,7 +7,6 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import store from "store/store";
 import { ThemeProvider } from "styled-components";
-import theme from "theme";
 
 const change = (element: Element | Node | Document | Window, value: string) => {
     fireEvent.change(element, { target: { value } });

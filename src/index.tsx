@@ -1,5 +1,6 @@
 import { ConfigProvider } from "antd";
 import vi from "antd/es/locale/vi_VN";
+import theme from "config/theme";
 import AppContainer from "modules/App/containers/App";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -7,7 +8,6 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import store from "store/store";
 import { ThemeProvider } from "styled-components";
-import theme from "theme";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(

@@ -1,7 +1,7 @@
 import { Role } from "modules/Auth";
+import renderPage, { loginWith } from "tests/helpers";
 import { initialState } from "tests/mocks/store";
 import "tests/mocks/window.matchMedia";
-import renderPage, { loginWith } from "tests/helpers";
 
 describe("Kiểm tra phân quyền của phần quản lý tài khoản", () => {
     describe("Kiểm tra trang quản lý tài khoản", () => {

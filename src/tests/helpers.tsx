@@ -1,5 +1,6 @@
 import { SubjectRawRule } from "@casl/ability";
 import { act, render as reactRender } from "@testing-library/react";
+import theme from "config/theme";
 import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
 import App from "modules/App/containers/App";
@@ -10,7 +11,6 @@ import { MemoryRouter } from "react-router-dom";
 import { RootState } from "store/types";
 import { ThemeProvider } from "styled-components";
 import mockStore, { mockState as state } from "tests/mocks/store";
-import theme from "theme";
 
 async function render(store: ReturnType<typeof mockStore>, url: string) {
     await act(async () => {

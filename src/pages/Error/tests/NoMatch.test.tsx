@@ -1,9 +1,9 @@
 import { cleanup, render, screen } from "@testing-library/react";
+import theme from "config/theme";
 import NoMatch from "pages/Error/NoMatch";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import theme from "theme";
 
 describe("Kiểm tra trang báo lỗi", () => {
     beforeEach(() => {
