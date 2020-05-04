@@ -11,12 +11,13 @@ import { Category, Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDebounce } from "react-use";
-import songsService from "services/songsService";
+import SongService from "services/songService";
 
 const SongPage: React.FC = () => {
     const history = useHistory();
+    const songService = new SongService();
     const [searchValue, setSearchValue] = useState("");
-    const [songsTable, setSongsTable] = useState([]);
+    const [songsTable, setSongsTable] = useState<Song[]>([]);
     const [pagination, setPagination] = useState<PaginationConfig>({
         current: 1,
         pageSize: 20,
@@ -31,7 +32,7 @@ const SongPage: React.FC = () => {
     const getSongsList = async (query: Query) => {
         try {
             showLoading(true);
-            const response = await songsService.get(query);
+            const response = await songService.get(query);
             setSongsTable(response.data.data);
             return response;
         } catch (e) {
@@ -91,7 +92,7 @@ const SongPage: React.FC = () => {
     const deleteSong = async (song: Song) => {
         try {
             showLoading(true);
-            const response = await songsService.remove(song.id);
+            const response = await songService.remove(song.id);
             // Cập nhật lại dữ liệu trong bảng
             await refreshTable();
             notification.success({

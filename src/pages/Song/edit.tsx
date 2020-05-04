@@ -5,7 +5,7 @@ import { Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { APIResponse } from "services/service";
-import songsService from "services/songsService";
+import SongService from "services/songService";
 
 type ParamTypes = {
     id: string;
@@ -14,6 +14,7 @@ type ParamTypes = {
 const EditSongPage: React.FC = () => {
     const history = useHistory();
     const params = useParams<ParamTypes>();
+    const songService = new SongService();
     const [form] = Form.useForm();
     const [song, setSong] = useState<Partial<Song>>({});
 
@@ -22,12 +23,12 @@ const EditSongPage: React.FC = () => {
     }, [song.name]);
 
     useEffect(() => {
-        songsService.find(~~params.id)
+        songService.find(~~params.id)
             .then(response => setSong(response.data))
             .catch((error: AxiosError<APIResponse>) => notification.error({
                 message: error.response?.data.message,
             }));
-    }, [params.id]);
+    }, [params.id, songService]);
 
     const submitForm = () => {};
 
