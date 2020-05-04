@@ -1,21 +1,19 @@
 import { AxiosRequestConfig } from "axios";
-import { LoginResponse, User } from "modules/Auth/types";
-import service from "./service";
+import { LoginResponse, User } from "modules/Auth";
+import http from "services/http";
 
-function login(email: string, password: string) {
-    return service.post<LoginResponse>("login", { email, password });
+class AuthService {
+    public login(email: string, password: string) {
+        return http.post<LoginResponse>("login", { email, password });
+    }
+
+    public me(config?: AxiosRequestConfig) {
+        return http.get<User>("users/me", config);
+    }
+
+    public logout() {
+        return http.post("logout");
+    }
 }
 
-function me(config?: AxiosRequestConfig) {
-    return service.get<User>("users/me", config);
-}
-
-function logout() {
-    return service.post("logout");
-}
-
-export default {
-    login,
-    logout,
-    me,
-};
+export default AuthService;

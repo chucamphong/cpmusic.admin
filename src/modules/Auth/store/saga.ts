@@ -2,9 +2,11 @@ import { AxiosError, AxiosResponse } from "axios";
 import { actions, LoginFailedResponse, LoginResponse, User } from "modules/Auth";
 import { actions as loadingActions } from "modules/Loading";
 import { all, call, fork, put, take } from "redux-saga/effects";
-import authService from "services/authService";
+import AuthService from "services/authService";
 
 type LoginActionType = ReturnType<typeof actions.login.request>;
+
+const authService = new AuthService();
 
 /**
  * Thực hiện đăng nhập
