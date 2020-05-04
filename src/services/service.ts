@@ -1,5 +1,6 @@
 import Query from "@chuphong/query-builder";
 import { AxiosInstance } from "axios";
+import { isEmpty } from "lodash";
 import http from "services/http";
 
 export interface APIResponse {
@@ -31,6 +32,10 @@ export class Service<T extends Object> {
     protected http: AxiosInstance = http;
 
     constructor(model: string) {
+        if (isEmpty(model.trim())) {
+            throw new Error("Tên model không thể để trống.");
+        }
+
         this.model = model;
     }
 
