@@ -1,5 +1,6 @@
 import { Artist } from "pages/Artists/types";
 import { Category } from "pages/Category/types";
+import { Moment } from "moment";
 
 export type Song = {
     id: number;
@@ -7,8 +8,8 @@ export type Song = {
     other_name?: string;
     thumbnail: string;
     url: string;
-    year: number;
+    year: number | Moment;
     views: number;
     category: Category;
-    artists: Artist | Artist[]
+    artists: Artist[]
 };
