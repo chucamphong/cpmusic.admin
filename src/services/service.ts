@@ -46,12 +46,12 @@ export class Service<T extends Object> {
         ].filter(Boolean).join("/");
     }
 
-    public get(query: string | Query) {
-        return this.http.get<APIPaginatedResponse<T>>(query.toString());
+    public get<C>(query: string | Query) {
+        return this.http.get<C extends Object ? C : APIPaginatedResponse<T>>(query.toString());
     }
 
-    public find(entityId: number) {
-        return this.http.get<T>(this.url(entityId));
+    public find<C>(entityId: number) {
+        return this.http.get<C extends Object ? C : T>(this.url(entityId));
     }
 
     public create(entity: Partial<T>) {
