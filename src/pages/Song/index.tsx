@@ -7,7 +7,6 @@ import { AxiosError, AxiosResponse } from "axios";
 import { truncate } from "lodash";
 import notification from "modules/Notification/notification";
 import { Artist } from "pages/Artists/types";
-import { Category } from "pages/Category/types";
 import { Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
@@ -159,9 +158,7 @@ const SongPage: React.FC = () => {
                                 compactDisplay: "short",
                             }).format(views)
                         } />
-                        <Table.Column title="Thể loại" dataIndex="category" width={140} render={(category: Category) =>
-                            category.name
-                        } />
+                        <Table.Column title="Thể loại" dataIndex="category" width={140} />
                         <Table.Column<Song> title="Chức năng" width={150} align="center" render={(_, song) => (
                             <Space>
                                 <Popconfirm
