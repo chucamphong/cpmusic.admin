@@ -21,6 +21,7 @@ module.exports = override(
             "@popover-background": "#303135",
             "@icon-color": "#e8e9ed",
             "@select-item-selected-bg": "@primary-color",
+            "@page-header-padding": 0,
         },
     }),
     useEslintRc(),
