@@ -1,10 +1,12 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
-import { Breadcrumb, Button, Input, PageHeader, Popconfirm, Space, Table } from "antd";
+import { Button, Input, Popconfirm, Space, Table } from "antd";
 import { PaginationConfig } from "antd/es/pagination";
 import { TablePaginationConfig } from "antd/lib/table";
 import { AxiosError, AxiosResponse } from "axios";
+import numberFormat from "helpers/numberFormat";
 import { truncate } from "lodash";
+import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
 import { Artist } from "pages/Artists/types";
 import { Song } from "pages/Song/types";
@@ -12,6 +14,17 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDebounce } from "react-use";
 import SongService from "services/songService";
+
+const breadcrumb: BreadcrumbProps = {
+    useBrowserHistory: true,
+    routes: [{
+        path: "/",
+        breadcrumbName: "Trang chủ",
+    }, {
+        path: "/bai-hat",
+        breadcrumbName: "Quản lý bài hát",
+    }],
+};
 
 const SongPage: React.FC = () => {
     const history = useHistory();
@@ -24,9 +37,6 @@ const SongPage: React.FC = () => {
         showSizeChanger: false,
     });
     const [loading, showLoading] = useState(true);
-
-    // Quay trở lại trang /bai-hat
-    const goBack = () => history.push("/bai-hat");
 
     // Lấy danh sách bài hát theo query
     const getSongsList = async (query: Query) => {
@@ -119,62 +129,55 @@ const SongPage: React.FC = () => {
     useDebounce(searchSong, 500, [searchValue]);
 
     return (
-        <Space direction={"vertical"} style={{ width: "100%" }}>
-            <Breadcrumb>
-                <Breadcrumb.Item>
-                    <Link to={"/"}>Trang chủ</Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>Bài hát</Breadcrumb.Item>
-            </Breadcrumb>
+        <PageHeader title="Quản Lý Bài Hát" breadcrumb={breadcrumb} onBack={() => history.goBack()} extra={[
+            <Link to="/bai-hat/tao-bai-hat" key="create">
+                <Button type="primary" icon={<PlusOutlined />}>Thêm</Button>
+            </Link>,
+        ]}>
+            <Space direction={"vertical"} style={{ width: "100%" }}>
+                {/* Thanh tìm kiếm */}
+                <Input.Search value={searchValue} onChange={(e) => setSearchValue(e.target.value)} maxLength={255}
+                    placeholder="Tìm kiếm theo tên bài hát, nghệ sĩ, thể loại" />
 
-            <PageHeader title="Bài Hát" onBack={goBack} extra={[
-                <Link to="/bai-hat/tao-bai-hat" key="create">
-                    <Button type="primary" icon={<PlusOutlined />}>Thêm</Button>
-                </Link>,
-            ]} style={{ padding: 0 }}>
-                <Space direction={"vertical"} style={{ width: "100%" }}>
-                    {/* Thanh tìm kiếm */}
-                    <Input.Search value={searchValue} onChange={(e) => setSearchValue(e.target.value)} maxLength={255}
-                        placeholder="Tìm kiếm theo tên bài hát, nghệ sĩ, thể loại" />
-
-                    {/* Bảng danh sách tài khản */}
-                    <Table rowKey={"id"} dataSource={songsTable} loading={loading} onChange={(pagination) => handleTableChange(pagination)}
-                        pagination={pagination as TablePaginationConfig} scroll={{ y: 576 }} style={{ touchAction: "manipulation" }} bordered>
-                        <Table.Column title="ID" dataIndex="id" width={84} align="center" />
-                        <Table.Column<Song> title="Ảnh đại diện" dataIndex="thumbnail" width={120} align="center"
-                            render={(image: string, record) => (
-                                <img src={image} alt={record.name} style={{ maxWidth: 90 }} />
-                            )} />
-                        <Table.Column title="Tên bài hát" dataIndex="name" width={300} ellipsis />
-                        <Table.Column title="Tên khác" dataIndex="other_name" width={250} ellipsis />
-                        <Table.Column title="Nghệ sĩ" dataIndex="artists" width={150} ellipsis render={( artists: Artist[]) =>
+                {/* Bảng danh sách tài khản */}
+                <Table rowKey={"id"} dataSource={songsTable} loading={loading}
+                    onChange={(pagination) => handleTableChange(pagination)}
+                    pagination={pagination as TablePaginationConfig} scroll={{ y: 576 }}
+                    style={{ touchAction: "manipulation" }} bordered>
+                    <Table.Column title="ID" dataIndex="id" width={84} align="center" />
+                    <Table.Column<Song> title="Ảnh đại diện" dataIndex="thumbnail" width={120} align="center"
+                        render={(image: string, record) => (
+                            <img src={image} alt={record.name} style={{ maxWidth: 90 }} />
+                        )} />
+                    <Table.Column title="Tên bài hát" dataIndex="name" width={300} ellipsis />
+                    <Table.Column title="Tên khác" dataIndex="other_name" width={250} ellipsis />
+                    <Table.Column title="Nghệ sĩ" dataIndex="artists" width={150} ellipsis
+                        render={(artists: Artist[]) =>
                             artists.map(artist => artist.name).join(", ")
                         } />
-                        <Table.Column title="Năm phát hành" dataIndex="year" width={120} align="center" />
-                        <Table.Column title="Lượt nghe" dataIndex="views" width={120} align="center" render={(views: number) =>
-                            Intl.NumberFormat("vi", {
-                                // @ts-ignore
-                                notation: "compact",
-                                compactDisplay: "short",
-                            }).format(views)
-                        } />
-                        <Table.Column title="Thể loại" dataIndex="category" width={140} />
-                        <Table.Column<Song> title="Chức năng" width={150} align="center" render={(_, song) => (
-                            <Space>
-                                <Popconfirm
-                                    title={`Bạn có muốn xóa bài hát ${truncate(song.name, { length: 10 })}?`}
-                                    onConfirm={() => deleteSong(song)}>
-                                    <Button type="primary" icon={<DeleteOutlined />} danger />
-                                </Popconfirm>
-                                <Link to={`/bai-hat/${song.id}`}>
-                                    <Button type="primary" icon={<EditOutlined />} />
-                                </Link>
-                            </Space>
-                        )} />
-                    </Table>
-                </Space>
-            </PageHeader>
-        </Space>
+                    <Table.Column title="Năm phát hành" dataIndex="year" width={120} align="center" />
+                    <Table.Column title="Lượt nghe" dataIndex="views" width={120} align="center"
+                        render={(views: number) => numberFormat(views, "vi", {
+                            // @ts-ignore
+                            notation: "compact",
+                            compactDisplay: "short",
+                        })} />
+                    <Table.Column title="Thể loại" dataIndex="category" width={140} />
+                    <Table.Column<Song> title="Chức năng" width={150} align="center" render={(_, song) => (
+                        <Space>
+                            <Popconfirm
+                                title={`Bạn có muốn xóa bài hát ${truncate(song.name, { length: 10 })}?`}
+                                onConfirm={() => deleteSong(song)}>
+                                <Button type="primary" icon={<DeleteOutlined />} danger />
+                            </Popconfirm>
+                            <Link to={`/bai-hat/${song.id}`}>
+                                <Button type="primary" icon={<EditOutlined />} />
+                            </Link>
+                        </Space>
+                    )} />
+                </Table>
+            </Space>
+        </PageHeader>
     );
 };
 

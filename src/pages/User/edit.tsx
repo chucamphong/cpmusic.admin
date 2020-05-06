@@ -1,15 +1,16 @@
 import { useAbility } from "@casl/react";
-import { Breadcrumb, Button, Col, Form, Input, PageHeader, Row, Select, Space } from "antd";
+import { Button, Col, Form, Input, Row, Select } from "antd";
 import { Rule } from "antd/es/form";
 import { AxiosError } from "axios";
 import { difference } from "helpers";
 import { has, isEmpty } from "lodash";
 import { useAuth, User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
+import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
 import UploadImage from "pages/User/components/UploadImage";
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import UserService from "services/userService";
 
 type ParamTypes = {
@@ -51,6 +52,19 @@ const EditUserPage: React.FC = () => {
     const [user, setUser] = useState<Partial<User>>({});
     const [loading, showLoading] = useState(false);
     const [quit, quitPage] = useState(false);
+    const breadcrumb: BreadcrumbProps = {
+        useBrowserHistory: true,
+        routes: [{
+            path: "/",
+            breadcrumbName: "Trang chủ",
+        }, {
+            path: "/thanh-vien",
+            breadcrumbName: "Quản lý tài khoản",
+        }, {
+            path: `/thanh-vien/${params.id}`,
+            breadcrumbName: "Chỉnh sửa tài khoản",
+        }],
+    };
 
     useEffect(() => {
         // Cập nhật tiêu đề trang web
@@ -77,7 +91,7 @@ const EditUserPage: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quit]);
 
-    const goBack = () => history.push("/thanh-vien");
+    const goBack = () => history.goBack();
 
     const submitForm = async (formData: Partial<User>) => {
         // Lấy những trường thay đổi để gửi lên server, tránh gửi dư thừa những trường không thay đổi
@@ -122,70 +136,58 @@ const EditUserPage: React.FC = () => {
     };
 
     return (
-        <Space direction="vertical" style={{ width: "100%" }}>
-            <Breadcrumb>
-                <Breadcrumb.Item>
-                    <Link to="/">Trang chủ</Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>
-                    <Link to="/thanh-vien">Thành viên</Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>Chỉnh sửa thông tin</Breadcrumb.Item>
-            </Breadcrumb>
-
-            <PageHeader title="Chỉnh Sửa Thông Tin" onBack={goBack} style={{ padding: 0 }}>
-                <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(user).map(key => ({
-                    name: [key],
-                    value: user[key],
-                }))}>
-                    <Row gutter={24}>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="id" label="ID">
-                                <Input disabled />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="email" label="Địa chỉ email">
-                                <Input disabled />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="name" label="Họ tên" rules={rules.name}>
-                                <Input maxLength={255} />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="role" label="Chức vụ" rules={rules.role}>
-                                <Select disabled={ability.cannot("update", "users.permissions")}>
-                                    <Select.Option value="admin">Admin</Select.Option>
-                                    <Select.Option value="mod">Moderator</Select.Option>
-                                    <Select.Option value="member">Member</Select.Option>
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="password" label="Mật khẩu" rules={rules.password}>
-                                <Input.Password maxLength={255} />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name={"avatar"} label="Ảnh đại diện">
-                                <UploadImage defaultImage={user.avatar}
-                                    onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row gutter={12} justify="end">
-                        <Col>
-                            <Button onClick={goBack}>Hủy bỏ</Button>
-                        </Col>
-                        <Col>
-                            <Button type="primary" htmlType="submit" loading={loading}>Cập nhật</Button>
-                        </Col>
-                    </Row>
-                </Form>
-            </PageHeader>
-        </Space>
+        <PageHeader title="Chỉnh Sửa Thông Tin" breadcrumb={breadcrumb} onBack={goBack}>
+            <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(user).map(key => ({
+                name: [key],
+                value: user[key],
+            }))}>
+                <Row gutter={24}>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="id" label="ID">
+                            <Input disabled />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="email" label="Địa chỉ email">
+                            <Input disabled />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="name" label="Họ tên" rules={rules.name}>
+                            <Input maxLength={255} />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="role" label="Chức vụ" rules={rules.role}>
+                            <Select disabled={ability.cannot("update", "users.permissions")}>
+                                <Select.Option value="admin">Admin</Select.Option>
+                                <Select.Option value="mod">Moderator</Select.Option>
+                                <Select.Option value="member">Member</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="password" label="Mật khẩu" rules={rules.password}>
+                            <Input.Password maxLength={255} />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name={"avatar"} label="Ảnh đại diện">
+                            <UploadImage defaultImage={user.avatar}
+                                onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row gutter={12} justify="end">
+                    <Col>
+                        <Button onClick={goBack}>Hủy bỏ</Button>
+                    </Col>
+                    <Col>
+                        <Button type="primary" htmlType="submit" loading={loading}>Cập nhật</Button>
+                    </Col>
+                </Row>
+            </Form>
+        </PageHeader>
     );
 };
 

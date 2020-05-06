@@ -1,15 +1,16 @@
 import Query from "@chuphong/query-builder";
-import { Breadcrumb, Button, Col, DatePicker, Form, Input, InputNumber, PageHeader, Row, Select, Space } from "antd";
+import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
 import { AxiosError } from "axios";
 import { difference } from "helpers";
 import numberFormat from "helpers/numberFormat";
+import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
 import moment from "moment";
 import { Artist } from "pages/Artists/types";
 import { Category } from "pages/Category/types";
 import { Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import ArtistService from "services/artistService";
 import CategoryService from "services/categoryService";
 import { APIResponse } from "services/service";
@@ -32,6 +33,20 @@ const EditSongPage: React.FC = () => {
     const [artists, setArtists] = useState<Artist[]>([]);
     const [categories, setCategorise] = useState<Category[]>([]);
     const goBack = () => history.push("/bai-hat");
+
+    const breadcrumb: BreadcrumbProps = {
+        useBrowserHistory: true,
+        routes: [{
+            path: "/",
+            breadcrumbName: "Trang chủ",
+        }, {
+            path: "/bai-hat",
+            breadcrumbName: "Quản lý bài hát",
+        }, {
+            path: `/bai-hat/${params.id}`,
+            breadcrumbName: "Chỉnh sửa bài hát",
+        }],
+    };
 
     useEffect(() => {
         document.title = `Chỉnh sửa bài hát ${song.name ?? ""}`;
@@ -78,83 +93,71 @@ const EditSongPage: React.FC = () => {
     };
 
     return (
-        <Space direction="vertical" style={{ width: "100%" }}>
-            <Breadcrumb>
-                <Breadcrumb.Item>
-                    <Link to="/">Trang chủ</Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>
-                    <Link to="/bai-hat">Bài hát</Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>Chỉnh sửa bài hát</Breadcrumb.Item>
-            </Breadcrumb>
-
-            <PageHeader title={`Chỉnh Sửa Bài Hát ${song.name}`} onBack={goBack} style={{ padding: 0 }}>
-                <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(song).map(key => ({
-                    name: [key],
-                    value: song[key],
-                }))}>
-                    <Row gutter={24}>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="id" label="ID">
-                                <Input disabled />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="name" label="Tên bài hát">
-                                <Input />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="other_name" label="Tên khác">
-                                <Input />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="artists" label="Nghệ sĩ">
-                                <Select mode="multiple" placeholder="Chọn nghệ sĩ">
-                                    {artists.map(artist => (
-                                        <Select.Option key={artist.name} value={artist.name}>
-                                            {artist.name}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="category" label="Thể loại">
-                                <Select placeholder="Chọn thể loại bài hát" showSearch>
-                                    {categories.map(category => (
-                                        <Select.Option key={category.name} value={category.name}>
-                                            {category.name}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="year" label="Năm phát hành">
-                                <DatePicker picker="year" />
-                            </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                            <Form.Item name="views" label="Lượt nghe">
-                                <InputNumber formatter={view => numberFormat(view as number)} min={0}
-                                    style={{ width: "100%" }}/>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row gutter={12} justify="end">
-                        <Col>
-                            <Button onClick={goBack}>Hủy bỏ</Button>
-                        </Col>
-                        <Col>
-                            <Button type="primary" htmlType="submit" loading={loading}>Cập nhật</Button>
-                        </Col>
-                    </Row>
-                </Form>
-            </PageHeader>
-        </Space>
+        <PageHeader title={`Chỉnh Sửa Bài Hát ${song.name}`} breadcrumb={breadcrumb} onBack={goBack}>
+            <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(song).map(key => ({
+                name: [key],
+                value: song[key],
+            }))}>
+                <Row gutter={24}>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="id" label="ID">
+                            <Input disabled />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="name" label="Tên bài hát">
+                            <Input />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="other_name" label="Tên khác">
+                            <Input />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="artists" label="Nghệ sĩ">
+                            <Select mode="multiple" placeholder="Chọn nghệ sĩ">
+                                {artists.map(artist => (
+                                    <Select.Option key={artist.name} value={artist.name}>
+                                        {artist.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="category" label="Thể loại">
+                            <Select placeholder="Chọn thể loại bài hát" showSearch>
+                                {categories.map(category => (
+                                    <Select.Option key={category.name} value={category.name}>
+                                        {category.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="year" label="Năm phát hành">
+                            <DatePicker picker="year" />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="views" label="Lượt nghe">
+                            <InputNumber formatter={view => numberFormat(view as number)} min={0}
+                                style={{ width: "100%" }} />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row gutter={12} justify="end">
+                    <Col>
+                        <Button onClick={goBack}>Hủy bỏ</Button>
+                    </Col>
+                    <Col>
+                        <Button type="primary" htmlType="submit" loading={loading}>Cập nhật</Button>
+                    </Col>
+                </Row>
+            </Form>
+        </PageHeader>
     );
 };
 
