@@ -47,19 +47,13 @@ const UploadSong: React.FC<Props> = ({ upload, onSuccess }) => {
     const hasSong: boolean = !!currentSong;
 
     return (
-        <React.Fragment>
-            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-            <audio controls>
-                <source src={currentSong} type="audio/mpeg" />
-            </audio>
-            <Upload.Dragger multiple={false} customRequest={request} onChange={handleUpload} accept=".mp3" listType="text"
-                showUploadList={false}>
-                {hasSong && !loading ?
-                    <span>Tải bài hát lên thành công</span> :
-                    uploadButton
-                }
-            </Upload.Dragger>
-        </React.Fragment>
+        <Upload.Dragger multiple={false} customRequest={request} onChange={handleUpload} accept="audio/mpeg" listType="text"
+            showUploadList={false}>
+            {hasSong && !loading ?
+                <span>Tải bài hát lên thành công</span> :
+                uploadButton
+            }
+        </Upload.Dragger>
     );
 };
 

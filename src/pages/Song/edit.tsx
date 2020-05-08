@@ -1,5 +1,6 @@
 import Query from "@chuphong/query-builder";
 import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
+import { Rule } from "antd/es/form";
 import { AxiosError } from "axios";
 import { difference, numberFormat } from "helpers";
 import { isEmpty } from "lodash";
@@ -11,7 +12,7 @@ import { Artist } from "pages/Artists/types";
 import { Category } from "pages/Category/types";
 import UploadSong from "pages/Song/components/UploadSong";
 import { Song } from "pages/Song/types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { APIResponse, ArtistService, CategoryService, SongService } from "services";
 
@@ -23,6 +24,46 @@ const songService = new SongService();
 const artistService = new ArtistService();
 const categoryService = new CategoryService();
 
+/**
+ * Tạo bộ quy tắc để kiểm tra dữ liệu khi nhập form
+ */
+const rules: ArrayDictionary<Rule> = {
+    name: [{
+        required: true,
+        message: "Tên bài hát không được để trống",
+    }, {
+        min: 8,
+        message: "Tối thiểu 8 ký tự",
+    }],
+    other_name: [{
+        min: 8,
+        message: "Tối thiểu 8 ký tự",
+    }],
+    thumbnail: [{
+        required: true,
+        message: "Không được để trống ảnh đại diện",
+    }, {
+        type: "url",
+        message: "Vui lòng nhập vào một url",
+    }],
+    url: [{
+        type: "url",
+        message: "Vui lòng nhập vào một url",
+    }],
+    year: [{
+        required: true,
+        message: "Không được để trống năm phát hành",
+    }],
+    category: [{
+        required: true,
+        message: "Không được để trống thể loại",
+    }],
+    artists: [{
+        required: true,
+        message: "Không được để trống nghệ sĩ",
+    }],
+};
+
 const EditSongPage: React.FC = () => {
     const history = useHistory();
     const params = useParams<ParamTypes>();
@@ -32,6 +73,7 @@ const EditSongPage: React.FC = () => {
     const [artists, setArtists] = useState<Artist[]>([]);
     const [categories, setCategorise] = useState<Category[]>([]);
     const [quit, quitPage] = useState(false);
+    const audio = useRef<HTMLAudioElement | null>(null);
 
     const breadcrumb: BreadcrumbProps = {
         useBrowserHistory: true,
@@ -86,6 +128,10 @@ const EditSongPage: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        audio.current?.load();
+    }, [song.url]);
+
+    useEffect(() => {
         if (quit) {
             history.push("/bai-hat");
         }
@@ -104,6 +150,9 @@ const EditSongPage: React.FC = () => {
         // Gửi request cập nhật thông tin lên server
         try {
             showLoading(true);
+
+            data["year"] = (data.year as moment.Moment)?.year();
+            
             // Gửi request
             const response = await songService.update(+params.id, data);
 
@@ -129,6 +178,10 @@ const EditSongPage: React.FC = () => {
                 name: [key],
                 value: song[key],
             }))}>
+                {/* eslint-disable-next-line */}
+                <audio ref={audio} controls style={{ width: "100%", marginBottom: 10 }}>
+                    <source src={song.url} type="audio/mpeg" />
+                </audio>
                 <Row gutter={24}>
                     <Col xs={24} sm={12}>
                         <Form.Item name="id" label="ID">
@@ -136,17 +189,17 @@ const EditSongPage: React.FC = () => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item name="name" label="Tên bài hát">
-                            <Input />
+                        <Form.Item name="name" label="Tên bài hát" rules={rules.name}>
+                            <Input maxLength={255} />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item name="other_name" label="Tên khác">
-                            <Input />
+                        <Form.Item name="other_name" label="Tên khác" rules={rules.other_name}>
+                            <Input maxLength={255}  />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item name="artists" label="Nghệ sĩ">
+                        <Form.Item name="artists" label="Nghệ sĩ" rules={rules.artists}>
                             <Select mode="multiple" placeholder="Chọn nghệ sĩ">
                                 {artists.map(artist => (
                                     <Select.Option key={artist.name} value={artist.name}>
@@ -157,7 +210,7 @@ const EditSongPage: React.FC = () => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item name="category" label="Thể loại">
+                        <Form.Item name="category" label="Thể loại" rules={rules.category}>
                             <Select placeholder="Chọn thể loại bài hát" showSearch>
                                 {categories.map(category => (
                                     <Select.Option key={category.name} value={category.name}>
@@ -168,7 +221,7 @@ const EditSongPage: React.FC = () => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item name="year" label="Năm phát hành">
+                        <Form.Item name="year" label="Năm phát hành" rules={rules.year}>
                             <DatePicker picker="year" />
                         </Form.Item>
                     </Col>
@@ -179,13 +232,13 @@ const EditSongPage: React.FC = () => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item name="url" label="Bài hát">
+                        <Form.Item name="url" label="Bài hát" rules={rules.url}>
                             <UploadSong upload={formData => songService.uploadSong(formData)}
                                 onSuccess={songUrl => form.setFieldsValue({ url: songUrl })}/>
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item name="thumbnail" label="Ảnh đại diện">
+                        <Form.Item name="thumbnail" label="Ảnh đại diện" rules={rules.thumbnail}>
                             <UploadImage upload={formData => songService.uploadThumbnail(formData)}
                                 defaultImage={song.thumbnail}
                                 onSuccess={(imageUrl) => form.setFieldsValue({ thumbnail: imageUrl })} />
