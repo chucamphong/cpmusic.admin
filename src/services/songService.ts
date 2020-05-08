@@ -5,6 +5,11 @@ export class SongService extends Service<Song> {
     constructor() {
         super("songs");
     }
+
+    public uploadThumbnail(formData: FormData) {
+        formData.append("type", "thumbnail");
+        return this.http.post("upload", formData);
+    }
 }
 
 export default SongService;

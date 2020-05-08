@@ -2,7 +2,9 @@ import Query from "@chuphong/query-builder";
 import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
 import { AxiosError } from "axios";
 import { difference, numberFormat } from "helpers";
+import { isEmpty } from "lodash";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
+import UploadImage from "modules/Common/components/UploadImage";
 import notification from "modules/Notification/notification";
 import moment from "moment";
 import { Artist } from "pages/Artists/types";
@@ -28,7 +30,7 @@ const EditSongPage: React.FC = () => {
     const [song, setSong] = useState<Partial<Song>>({});
     const [artists, setArtists] = useState<Artist[]>([]);
     const [categories, setCategorise] = useState<Category[]>([]);
-    const goBack = () => history.push("/bai-hat");
+    const [quit, quitPage] = useState(false);
 
     const breadcrumb: BreadcrumbProps = {
         useBrowserHistory: true,
@@ -82,14 +84,46 @@ const EditSongPage: React.FC = () => {
             }));
     }, []);
 
-    const submitForm = (formData: Partial<Song>) => {
+    useEffect(() => {
+        if (quit) {
+            history.push("/bai-hat");
+        }
+    }, [history, quit]);
+
+    const submitForm = async (formData: Partial<Song>) => {
         const data = difference(formData, song);
 
-        console.log(data);
+        // Trường hợp không có gì thay đổi thì không làm gì hết
+        if (isEmpty(data)) {
+            return notification.info({
+                message: "Có vẻ như bạn chưa thay đổi gì cả",
+            });
+        }
+
+        // Gửi request cập nhật thông tin lên server
+        try {
+            showLoading(true);
+            // Gửi request
+            const response = await songService.update(+params.id, data);
+
+            // Hiện thông báo thành công
+            notification.success({
+                message: response.data.message,
+            });
+
+            // Quay về trang quản lý bài hát
+            quitPage(true);
+        } catch (e) {
+            notification.error({
+                message: (e as AxiosError<APIResponse>).response?.data.message,
+            });
+        } finally {
+            showLoading(false);
+        }
     };
 
     return (
-        <PageHeader title={`Chỉnh Sửa Bài Hát ${song.name}`} breadcrumb={breadcrumb} onBack={goBack}>
+        <PageHeader title={`Chỉnh Sửa Bài Hát ${song.name}`} breadcrumb={breadcrumb} onBack={() => history.push("/bai-hat")}>
             <Form form={form} layout="vertical" onFinish={submitForm} fields={Object.keys(song).map(key => ({
                 name: [key],
                 value: song[key],
@@ -143,10 +177,22 @@ const EditSongPage: React.FC = () => {
                                 style={{ width: "100%" }} />
                         </Form.Item>
                     </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="thumbnail" label="Ảnh đại diện">
+                            <UploadImage upload={formData => songService.uploadThumbnail(formData)}
+                                defaultImage={song.thumbnail}
+                                onSuccess={(imageUrl) => form.setFieldsValue({ thumbnail: imageUrl })} />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        <Form.Item name="url" label="Bài hát">
+                            <Input />
+                        </Form.Item>
+                    </Col>
                 </Row>
                 <Row gutter={12} justify="end">
                     <Col>
-                        <Button onClick={goBack}>Hủy bỏ</Button>
+                        <Button onClick={() => history.goBack()}>Hủy bỏ</Button>
                     </Col>
                     <Col>
                         <Button type="primary" htmlType="submit" loading={loading}>Cập nhật</Button>
