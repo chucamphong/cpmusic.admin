@@ -2,24 +2,24 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Space, Typography, Upload } from "antd";
 import { UploadChangeParam } from "antd/es/upload";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
+import { AxiosResponse } from "axios";
 import React, { useState } from "react";
-import UserService from "services/userService";
 
 type Props = {
+    upload: (formData: FormData) => Promise<AxiosResponse>;
     defaultImage?: string;
     onSuccess?: (imageUrl: string) => void;
 };
 
-const UploadImage: React.FC<Props> = ({ defaultImage, onSuccess }) => {
-    const userService = new UserService();
+const UploadImage: React.FC<Props> = ({ upload, defaultImage, onSuccess }) => {
     const [loading, showLoading] = useState(false);
     const [currentImage, setCurrentImage] = useState("");
 
-    function upload(options: RcCustomRequestOptions) {
+    function request(options: RcCustomRequestOptions) {
         const data = new FormData();
         data.append("file", options.file);
 
-        return userService.uploadAvatar(data)
+        return upload(data)
             .then(res => options.onSuccess(res.data, options.file))
             .catch(err => options.onError(err));
     }
@@ -48,8 +48,8 @@ const UploadImage: React.FC<Props> = ({ defaultImage, onSuccess }) => {
     const hasImage: boolean = !!currentImage || !!defaultImage;
 
     return (
-        <Upload customRequest={upload} onChange={handleUpload} showUploadList={false} listType="picture-card"
-            accept=".jpeg,.png,.jpg">
+        <Upload customRequest={request} onChange={handleUpload} accept=".jpeg,.jpg,.png" listType="picture-card"
+            showUploadList={false}>
             {hasImage && !loading ?
                 <img src={currentImage || defaultImage} alt="Avatar" style={{ maxWidth: 84 }} /> :
                 uploadButton

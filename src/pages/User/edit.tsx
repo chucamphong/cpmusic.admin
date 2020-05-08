@@ -7,8 +7,8 @@ import { has, isEmpty } from "lodash";
 import { useAuth, User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
+import UploadImage from "modules/Common/components/UploadImage";
 import notification from "modules/Notification/notification";
-import UploadImage from "pages/User/components/UploadImage";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { UserService } from "services";
@@ -42,10 +42,11 @@ const rules: ArrayDictionary<Rule> = {
     }],
 };
 
+const userService = new UserService();
+
 const EditUserPage: React.FC = () => {
     const auth = useAuth();
     const history = useHistory();
-    const userService = new UserService();
     const [form] = Form.useForm();
     const ability = useAbility(AbilityContext);
     const params = useParams<ParamTypes>();
@@ -173,7 +174,8 @@ const EditUserPage: React.FC = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                         <Form.Item name={"avatar"} label="Ảnh đại diện">
-                            <UploadImage defaultImage={user.avatar}
+                            <UploadImage upload={formData => userService.uploadAvatar(formData)}
+                                defaultImage={user.avatar}
                                 onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
                         </Form.Item>
                     </Col>

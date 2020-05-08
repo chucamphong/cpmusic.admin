@@ -6,7 +6,7 @@ import { User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
-import UploadImage from "pages/User/components/UploadImage";
+import UploadImage from "modules/Common/components/UploadImage";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserService, APIResponse } from "services";
@@ -64,6 +64,8 @@ const initialValues = {
     role: "member",
 };
 
+const userService = new UserService();
+
 const AddUserPage: React.FC = () => {
     const history = useHistory();
     const [form] = Form.useForm();
@@ -89,7 +91,7 @@ const AddUserPage: React.FC = () => {
     const submitForm = async (formData: Partial<User>) => {
         showLoading(true);
 
-        new UserService().create(formData)
+        userService.create(formData)
             .then(response => {
                 notification.success({
                     message: response.data.message,
@@ -137,7 +139,8 @@ const AddUserPage: React.FC = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                         <Form.Item name={"avatar"} label="Ảnh đại diện" rules={rules.avatar}>
-                            <UploadImage onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
+                            <UploadImage upload={formData => userService.uploadAvatar(formData)} 
+                                onSuccess={(imageUrl) => form.setFieldsValue({ avatar: imageUrl })} />
                         </Form.Item>
                     </Col>
                 </Row>

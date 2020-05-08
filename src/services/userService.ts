@@ -6,7 +6,8 @@ export default class UserService extends Service<User> {
         super("users");
     }
 
-    public uploadAvatar(data: FormData) {
-        return this.http.post(this.url("avatar"), data);
+    public uploadAvatar(formData: FormData) {
+        formData.append("type", "user");
+        return this.http.post("upload", formData);
     }
 }
