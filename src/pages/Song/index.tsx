@@ -152,9 +152,7 @@ const SongPage: React.FC = () => {
                     <Table.Column title="Tên bài hát" dataIndex="name" width={300} ellipsis />
                     <Table.Column title="Tên khác" dataIndex="other_name" width={250} ellipsis />
                     <Table.Column title="Nghệ sĩ" dataIndex="artists" width={150} ellipsis
-                        render={(artists: Artist[]) =>
-                            artists.map(artist => artist.name).join(", ")
-                        } />
+                        render={(artists: string[]) => artists.join(", ")} />
                     <Table.Column title="Năm phát hành" dataIndex="year" width={120} align="center" />
                     <Table.Column title="Lượt nghe" dataIndex="views" width={120} align="center"
                         render={(views: number) => numberFormat(views, "vi", {
