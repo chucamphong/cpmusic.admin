@@ -8,7 +8,6 @@ import { numberFormat } from "helpers";
 import { truncate } from "lodash";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
-import { Artist } from "pages/Artists/types";
 import { Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
@@ -78,13 +77,17 @@ const SongPage: React.FC = () => {
     };
 
     // Làm mới dữ liệu trong bảng bằng cách tìm kiếm lại
-    const refreshTable = async () => await searchSong();
+    const refreshTable = async () => await handleTableChange(pagination);
 
     // Gửi request lấy dữ liệu nếu table có sự thay đổi (chuyển trang,...)
     const handleTableChange = async (tablePagination: PaginationConfig) => {
-        const queryBuilder = new Query()
-            .for("songs")
+        const queryBuilder = new Query().for("songs")
             .include(["category", "artists"])
+            .select({
+                songs: ["id", "name", "other_name", "thumbnail", "url", "year", "views", "category_id"],
+                artists: ["name"],
+                category: ["id", "name"],
+            })
             .where("search", searchValue)
             .page(tablePagination.current as number)
             .limit(tablePagination.pageSize as number)
@@ -160,7 +163,7 @@ const SongPage: React.FC = () => {
                             notation: "compact",
                             compactDisplay: "short",
                         })} />
-                    <Table.Column title="Thể loại" dataIndex="category" width={140} />
+                    <Table.Column title="Thể loại" dataIndex="category" width={140} ellipsis />
                     <Table.Column<Song> title="Chức năng" width={150} align="center" render={(_, song) => (
                         <Space>
                             <Popconfirm
