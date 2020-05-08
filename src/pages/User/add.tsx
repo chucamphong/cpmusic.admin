@@ -9,8 +9,7 @@ import notification from "modules/Notification/notification";
 import UploadImage from "pages/User/components/UploadImage";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { APIResponse } from "services/service";
-import UserService from "services/userService";
+import { UserService, APIResponse } from "services";
 
 /**
  * Tạo bộ quy tắc để kiểm tra dữ liệu khi nhập form

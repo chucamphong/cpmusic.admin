@@ -11,7 +11,7 @@ import notification from "modules/Notification/notification";
 import UploadImage from "pages/User/components/UploadImage";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import UserService from "services/userService";
+import { UserService } from "services";
 
 type ParamTypes = {
     id: string;

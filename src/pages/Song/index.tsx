@@ -2,9 +2,9 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Button, Input, Popconfirm, Space, Table } from "antd";
 import { PaginationConfig } from "antd/es/pagination";
-import { TablePaginationConfig } from "antd/lib/table";
+import { TablePaginationConfig } from "antd/es/table";
 import { AxiosError, AxiosResponse } from "axios";
-import numberFormat from "helpers/numberFormat";
+import { numberFormat } from "helpers";
 import { truncate } from "lodash";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
@@ -13,7 +13,7 @@ import { Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDebounce } from "react-use";
-import SongService from "services/songService";
+import { SongService } from "services";
 
 const breadcrumb: BreadcrumbProps = {
     useBrowserHistory: true,

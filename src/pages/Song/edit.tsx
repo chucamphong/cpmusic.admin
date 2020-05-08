@@ -1,8 +1,7 @@
 import Query from "@chuphong/query-builder";
 import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
 import { AxiosError } from "axios";
-import { difference } from "helpers";
-import numberFormat from "helpers/numberFormat";
+import { difference, numberFormat } from "helpers";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
 import moment from "moment";
@@ -11,10 +10,7 @@ import { Category } from "pages/Category/types";
 import { Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import ArtistService from "services/artistService";
-import CategoryService from "services/categoryService";
-import { APIResponse } from "services/service";
-import SongService from "services/songService";
+import { APIResponse, ArtistService, CategoryService, SongService } from "services";
 
 type ParamTypes = {
     id: string;

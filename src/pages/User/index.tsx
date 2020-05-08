@@ -8,11 +8,11 @@ import { debounce, truncate } from "lodash";
 import { useAuth, User } from "modules/Auth";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import notification from "modules/Notification/notification";
-import { UserList } from "pages/User/types";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { APIPaginatedResponse } from "services/service";
-import UserService from "services/userService";
+import { UserService, APIPaginatedResponse } from "services";
+
+const userService = new UserService();
 
 const breadcrumb: BreadcrumbProps = {
     useBrowserHistory: true,
@@ -28,9 +28,8 @@ const breadcrumb: BreadcrumbProps = {
 const UserPage: React.FC = () => {
     const auth = useAuth();
     const history = useHistory();
-    const userService = new UserService();
 
-    const [usersTable, setUsersTable] = useState<UserList>([]);
+    const [usersTable, setUsersTable] = useState<User[]>([]);
     const [loading, showLoading] = useState(true);
     const [searchValue, setSearchValue] = useState("");
     const [column, setColumn] = useState("name");
