@@ -10,6 +10,11 @@ export class SongService extends Service<Song> {
         formData.append("type", "thumbnail");
         return this.http.post("upload", formData);
     }
+
+    public uploadSong(formData: FormData) {
+        formData.append("type", "song");
+        return this.http.post("upload", formData);
+    }
 }
 
 export default SongService;

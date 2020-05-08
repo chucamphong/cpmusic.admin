@@ -9,6 +9,7 @@ import notification from "modules/Notification/notification";
 import moment from "moment";
 import { Artist } from "pages/Artists/types";
 import { Category } from "pages/Category/types";
+import UploadSong from "pages/Song/components/UploadSong";
 import { Song } from "pages/Song/types";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -178,15 +179,16 @@ const EditSongPage: React.FC = () => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
+                        <Form.Item name="url" label="Bài hát">
+                            <UploadSong upload={formData => songService.uploadSong(formData)}
+                                onSuccess={songUrl => form.setFieldsValue({ url: songUrl })}/>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
                         <Form.Item name="thumbnail" label="Ảnh đại diện">
                             <UploadImage upload={formData => songService.uploadThumbnail(formData)}
                                 defaultImage={song.thumbnail}
                                 onSuccess={(imageUrl) => form.setFieldsValue({ thumbnail: imageUrl })} />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                        <Form.Item name="url" label="Bài hát">
-                            <Input />
                         </Form.Item>
                     </Col>
                 </Row>
