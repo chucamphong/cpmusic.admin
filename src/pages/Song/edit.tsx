@@ -32,12 +32,12 @@ const rules: ArrayDictionary<Rule> = {
         required: true,
         message: "Tên bài hát không được để trống",
     }, {
-        min: 8,
-        message: "Tối thiểu 8 ký tự",
+        min: 4,
+        message: "Tối thiểu 4 ký tự",
     }],
     other_name: [{
-        min: 8,
-        message: "Tối thiểu 8 ký tự",
+        min: 4,
+        message: "Tối thiểu 4 ký tự",
     }],
     thumbnail: [{
         required: true,
