@@ -72,7 +72,7 @@ const SongPage: React.FC = () => {
         setPagination({
             ...pagination,
             current: 1,                          // Reset lại phân trang về trang 1
-            total: response.data.meta.total,     // Cập nhật lại tổng số tài khoản để phân trang
+            total: response.data.meta.total,     // Cập nhật lại tổng số bài hát để phân trang
         });
     };
 
@@ -142,7 +142,7 @@ const SongPage: React.FC = () => {
                 <Input.Search value={searchValue} onChange={(e) => setSearchValue(e.target.value)} maxLength={255}
                     placeholder="Tìm kiếm theo tên bài hát, nghệ sĩ, thể loại" />
 
-                {/* Bảng danh sách tài khản */}
+                {/* Bảng danh sách bài hát */}
                 <Table rowKey={"id"} dataSource={songsTable} loading={loading}
                     onChange={(pagination) => handleTableChange(pagination)}
                     pagination={pagination as TablePaginationConfig} scroll={{ y: 576 }}
