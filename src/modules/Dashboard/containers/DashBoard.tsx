@@ -1,4 +1,4 @@
-import { HomeOutlined, PlayCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { AudioOutlined, HomeOutlined, PlayCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { useAbility } from "@casl/react";
 import { Dropdown, Menu } from "antd";
 import theme from "config/theme";
@@ -77,6 +77,13 @@ const DashBoardContainer: React.FC = ({ children }) => {
                             <span>Thành viên</span>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="/nghe-si" title={null} hidden={ability.cannot("view", "artists")}>
+                        <AudioOutlined />
+                        <Link to="/nghe-si">
+                            <span>Nghệ sĩ</span>
+                        </Link>
+                    </Menu.Item>
+
                     <Menu.Item key="/bai-hat" title={null} hidden={ability.cannot("view", "songs")}>
                         <PlayCircleOutlined />
                         <Link to="/bai-hat">
