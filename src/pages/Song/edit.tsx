@@ -1,7 +1,7 @@
 import Query from "@chuphong/query-builder";
 import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
 import { Rule } from "antd/es/form";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { difference, numberFormat } from "helpers";
 import { isEmpty } from "lodash";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
@@ -105,26 +105,21 @@ const EditSongPage: React.FC = () => {
             }));
     }, [params.id]);
 
-    // Lấy danh sách nghệ sĩ để phục vụ cho việc chọn lựa
+    // Lấy danh sách nghệ sĩ và thể loại
     useEffect(() => {
-        const query = new Query().for("artists").select("name");
+        const getArtists = artistService.get<Artist[]>(new Query().for("artists").select("name"));
+        const getCategories = categoryService.get<Category[]>(new Query().for("categories").select("name"));
 
-        artistService.get<Artist[]>(query)
-            .then(response => setArtists(response.data))
-            .catch((error: AxiosError<APIResponse>) => notification.error({
-                message: error.response?.data.message,
-            }));
-    }, []);
-
-    // Lấy danh sách thể loại để phục cho việc chọn lựa
-    useEffect(() => {
-        const query = new Query().for("categories").select("name");
-
-        categoryService.get<Category[]>(query)
-            .then(response => setCategorise(response.data))
-            .catch((error: AxiosError<APIResponse>) => notification.error({
-                message: error.response?.data.message,
-            }));
+        Promise.all<AxiosResponse<Artist[]>, AxiosResponse<Category[]>>([getArtists, getCategories])
+            .then(([artists, categories]) => {
+                setArtists(artists.data);
+                setCategorise(categories.data);
+            })
+            .catch((error: AxiosError<APIResponse>) => {
+                notification.error({
+                    message: error.response?.data.message,
+                });
+            });
     }, []);
 
     useEffect(() => {
