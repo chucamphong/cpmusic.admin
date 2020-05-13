@@ -5,6 +5,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { numberFormat } from "helpers";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import UploadImage from "modules/Common/components/UploadImage";
+import useQuitPage from "modules/Common/hooks/useQuitPage";
 import notification from "modules/Notification/notification";
 import moment from "moment";
 import { Artist } from "pages/Artists/types";
@@ -82,12 +83,12 @@ const breadcrumb: BreadcrumbProps = {
 
 const AddSongPage: React.FC = () => {
     const history = useHistory();
+    const [, quitPage] = useQuitPage("/bai-hat");
+    const audio = useRef<HTMLAudioElement | null>(null);
     const [form] = Form.useForm();
     const [loading, showLoading] = useState(false);
     const [artists, setArtists] = useState<Artist[]>([]);
     const [categories, setCategorise] = useState<Category[]>([]);
-    const [quit, quitPage] = useState(false);
-    const audio = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         document.title = "Tạo bài hát";
@@ -113,12 +114,6 @@ const AddSongPage: React.FC = () => {
     useEffect(() => {
         audio.current?.load();
     }, []);
-
-    useEffect(() => {
-        if (quit) {
-            history.push("/bai-hat");
-        }
-    }, [history, quit]);
 
     const submitForm = async (formData: Partial<Song>) => {
         // Gửi request tạo bài hát lên server

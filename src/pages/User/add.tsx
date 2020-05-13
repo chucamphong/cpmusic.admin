@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 import { User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
+import useQuitPage from "modules/Common/hooks/useQuitPage";
 import notification from "modules/Notification/notification";
 import UploadImage from "modules/Common/components/UploadImage";
 import React, { useCallback, useEffect, useState } from "react";
@@ -70,8 +71,8 @@ const AddUserPage: React.FC = () => {
     const history = useHistory();
     const [form] = Form.useForm();
     const ability = useAbility(AbilityContext);
+    const [, quitPage] = useQuitPage("/thanh-vien");
     const [loading, showLoading] = useState(false);
-    const [quit, quitPage] = useState(false);
 
     const goBack = useCallback(() => history.push("/thanh-vien"), [history]);
 
@@ -79,13 +80,6 @@ const AddUserPage: React.FC = () => {
     useEffect(() => {
         document.title = "Thêm tài khoản";
     }, []);
-
-    // Quay trở lại trang /thanh-vien nếu quit = true
-    useEffect(() => {
-        if (quit) {
-            goBack();
-        }
-    }, [goBack, quit]);
 
     // Gửi request tạo tài khoản lên server
     const submitForm = async (formData: Partial<User>) => {

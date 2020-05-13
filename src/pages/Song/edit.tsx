@@ -6,6 +6,7 @@ import { difference, numberFormat } from "helpers";
 import { isEmpty } from "lodash";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import UploadImage from "modules/Common/components/UploadImage";
+import useQuitPage from "modules/Common/hooks/useQuitPage";
 import notification from "modules/Notification/notification";
 import moment from "moment";
 import { Artist } from "pages/Artists/types";
@@ -67,13 +68,13 @@ const rules: ArrayDictionary<Rule> = {
 const EditSongPage: React.FC = () => {
     const history = useHistory();
     const params = useParams<ParamTypes>();
+    const audio = useRef<HTMLAudioElement | null>(null);
+    const [, quitPage] = useQuitPage("/bai-hat");
     const [form] = Form.useForm();
     const [loading, showLoading] = useState(false);
     const [song, setSong] = useState<Partial<Song>>({});
     const [artists, setArtists] = useState<Artist[]>([]);
     const [categories, setCategorise] = useState<Category[]>([]);
-    const [quit, quitPage] = useState(false);
-    const audio = useRef<HTMLAudioElement | null>(null);
 
     const breadcrumb: BreadcrumbProps = {
         useBrowserHistory: true,
@@ -125,12 +126,6 @@ const EditSongPage: React.FC = () => {
     useEffect(() => {
         audio.current?.load();
     }, [song.url]);
-
-    useEffect(() => {
-        if (quit) {
-            history.push("/bai-hat");
-        }
-    }, [history, quit]);
 
     const submitForm = async (formData: Partial<Song>) => {
         const data = difference(formData, song);

@@ -8,6 +8,7 @@ import { useAuth, User } from "modules/Auth";
 import AbilityContext from "modules/CASL/AbilityContext";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
 import UploadImage from "modules/Common/components/UploadImage";
+import useQuitPage from "modules/Common/hooks/useQuitPage";
 import notification from "modules/Notification/notification";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -50,9 +51,10 @@ const EditUserPage: React.FC = () => {
     const [form] = Form.useForm();
     const ability = useAbility(AbilityContext);
     const params = useParams<ParamTypes>();
+    const [, quitPage] = useQuitPage("/thanh-vien");
     const [user, setUser] = useState<Partial<User>>({});
     const [loading, showLoading] = useState(false);
-    const [quit, quitPage] = useState(false);
+
     const breadcrumb: BreadcrumbProps = {
         useBrowserHistory: true,
         routes: [{
@@ -84,13 +86,6 @@ const EditUserPage: React.FC = () => {
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    useEffect(() => {
-        if (quit) {
-            goBack();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [quit]);
 
     const goBack = () => history.goBack();
 
