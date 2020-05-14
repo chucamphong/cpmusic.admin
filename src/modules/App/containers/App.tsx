@@ -42,7 +42,7 @@ const AppContainer: React.FC = () => {
                     <EditUserPage />
                 </ProtectedRoute>
                 {/* Quản lý nghệ sĩ */}
-                <ProtectedRoute path={"/nghe-si"} action={"create"} subject={"artists"} exact>
+                <ProtectedRoute path={"/nghe-si"} action={"view"} subject={"artists"} exact>
                     <ArtistPage />
                 </ProtectedRoute>
                 {/* Quản lý bài hát */}
