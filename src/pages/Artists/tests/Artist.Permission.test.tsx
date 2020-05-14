@@ -48,10 +48,37 @@ describe("Kiểm tra phân quyền trang quản lý nghệ sĩ", () => {
             expect(document.title).toEqual("Chỉnh sửa nghệ sĩ");
         });
 
-        test("Báo lỗi khi không có quyền truy cập vào trang quản lý nghệ sĩ", async () => {
+        test("Báo lỗi khi không có quyền truy cập vào trang chỉnh sửa nghệ sĩ", async () => {
             const store = loginWith(Role.Moderator);
 
             await renderPage(store, "/nghe-si/24");
+
+            expect(document.title).toEqual("Không thể truy cập");
+        });
+    });
+
+    describe("Trang tạo nghệ sĩ", () => {
+        test("Bắt đăng nhập nếu chưa đăng nhập", async () => {
+            await renderPage(initialState, "/nghe-si/tao-nghe-si");
+
+            expect(document.title).toEqual("Đăng nhập");
+        });
+
+        test("Có thể truy cập trang chỉnh sửa nghệ sĩ", async () => {
+            const store = loginWith(Role.Moderator, [{
+                action: "create",
+                subject: "artists",
+            }]);
+
+            await renderPage(store, "/nghe-si/tao-nghe-si");
+
+            expect(document.title).toEqual("Tạo nghệ sĩ");
+        });
+
+        test("Báo lỗi khi không có quyền truy cập vào trang tạo nghệ sĩ", async () => {
+            const store = loginWith(Role.Moderator);
+
+            await renderPage(store, "/nghe-si/tao-nghe-si");
 
             expect(document.title).toEqual("Không thể truy cập");
         });
