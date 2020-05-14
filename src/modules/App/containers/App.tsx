@@ -5,6 +5,7 @@ import Loading from "modules/Loading/containers/Loading";
 import { GuestRoute, ProtectedRoute } from "modules/Route";
 import AccountPage from "pages/Account";
 import ArtistPage from "pages/Artists";
+import EditArtistPage from "pages/Artists/edit";
 import AccessDenied from "pages/Error/AccessDenied";
 import NoMatch from "pages/Error/NoMatch";
 import HomePage from "pages/Home";
@@ -44,6 +45,9 @@ const AppContainer: React.FC = () => {
                 {/* Quản lý nghệ sĩ */}
                 <ProtectedRoute path={"/nghe-si"} action={"view"} subject={"artists"} exact>
                     <ArtistPage />
+                </ProtectedRoute>
+                <ProtectedRoute path={"/nghe-si/:id"} action={"update"} subject={"artists"} exact>
+                    <EditArtistPage />
                 </ProtectedRoute>
                 {/* Quản lý bài hát */}
                 <ProtectedRoute path={"/bai-hat"} action={"view"} subject={"songs"} exact>

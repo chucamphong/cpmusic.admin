@@ -5,6 +5,11 @@ class ArtistService extends Service<Artist> {
     constructor() {
         super("artists");
     }
+
+    public uploadAvatar(formData: FormData) {
+        formData.append("type", "artist");
+        return this.http.post("upload", formData);
+    }
 }
 
 export default ArtistService;
