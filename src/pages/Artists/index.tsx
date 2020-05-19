@@ -1,7 +1,6 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Button, Input, Popconfirm, Space, Table } from "antd";
-import { PaginationConfig } from "antd/es/pagination";
 import { TablePaginationConfig } from "antd/es/table";
 import { AxiosError, AxiosResponse } from "axios";
 import PageHeader, { BreadcrumbProps } from "modules/Common/components/PageHeader";
@@ -29,7 +28,7 @@ const ArtistPage: React.FC = () => {
     const history = useHistory();
     const [searchValue, setSearchValue] = useState("");
     const [artistsTable, setArtistsTable] = useState<Artist[]>([]);
-    const [pagination, setPagination] = useState<PaginationConfig>({
+    const [pagination, setPagination] = useState<TablePaginationConfig>({
         current: 1,
         pageSize: 20,
         showSizeChanger: false,
@@ -67,7 +66,7 @@ const ArtistPage: React.FC = () => {
         });
     };
 
-    const handleTableChange = async (tablePagination: PaginationConfig) => {
+    const handleTableChange = async (tablePagination: TablePaginationConfig) => {
         const query = new Query().for("artists")
             .include("songsCount")
             .page(tablePagination.current as number)

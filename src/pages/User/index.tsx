@@ -1,8 +1,7 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Button, Input, Popconfirm, Select, Space, Table, Tag } from "antd";
-import { PaginationConfig } from "antd/es/pagination";
-import { TablePaginationConfig } from "antd/lib/table/interface";
+import { TablePaginationConfig } from "antd/es/table";
 import { AxiosError, AxiosResponse } from "axios";
 import { debounce, truncate } from "lodash";
 import { useAuth, User } from "modules/Auth";
@@ -33,7 +32,7 @@ const UserPage: React.FC = () => {
     const [loading, showLoading] = useState(true);
     const [searchValue, setSearchValue] = useState("");
     const [column, setColumn] = useState("name");
-    const [pagination, setPagination] = useState<PaginationConfig>({
+    const [pagination, setPagination] = useState<TablePaginationConfig>({
         current: 1,
         pageSize: 20,
         showSizeChanger: false,
@@ -56,7 +55,7 @@ const UserPage: React.FC = () => {
     };
 
     // Xử lý sự kiện khi phân trang
-    const handleTableChange = async (tablePagination: PaginationConfig) => {
+    const handleTableChange = async (tablePagination: TablePaginationConfig) => {
         const query = new Query().for("users")
             .where(column, searchValue)
             .page(tablePagination.current as number)

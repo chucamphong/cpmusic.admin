@@ -1,7 +1,6 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Query from "@chuphong/query-builder";
 import { Button, Input, Popconfirm, Space, Table } from "antd";
-import { PaginationConfig } from "antd/es/pagination";
 import { TablePaginationConfig } from "antd/es/table";
 import { AxiosError, AxiosResponse } from "axios";
 import { numberFormat } from "helpers";
@@ -30,7 +29,7 @@ const SongPage: React.FC = () => {
     const songService = new SongService();
     const [searchValue, setSearchValue] = useState("");
     const [songsTable, setSongsTable] = useState<Song[]>([]);
-    const [pagination, setPagination] = useState<PaginationConfig>({
+    const [pagination, setPagination] = useState<TablePaginationConfig>({
         current: 1,
         pageSize: 20,
         showSizeChanger: false,
@@ -80,7 +79,7 @@ const SongPage: React.FC = () => {
     const refreshTable = async () => await handleTableChange(pagination);
 
     // Gửi request lấy dữ liệu nếu table có sự thay đổi (chuyển trang,...)
-    const handleTableChange = async (tablePagination: PaginationConfig) => {
+    const handleTableChange = async (tablePagination: TablePaginationConfig) => {
         const queryBuilder = new Query().for("songs")
             .include(["category", "artists"])
             .select({
