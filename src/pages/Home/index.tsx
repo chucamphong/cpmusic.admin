@@ -1,28 +1,13 @@
 import Query from "@chuphong/query-builder";
-import { CardProps } from "antd/es/card";
+import { Col, Row } from "antd";
 import { AxiosError, AxiosResponse } from "axios";
 import notification from "modules/Notification/notification";
+import StatisticalCard from "pages/Song/components/StatisticalCard";
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col } from "antd";
 import { APIPaginatedResponse, APIResponse } from "services";
 import { Service } from "services/service";
-import styled from "styled-components";
 
 const service = new Service("random");
-
-const StyledCardMeta = styled(Card.Meta)`
-    .ant-card-meta-title {
-        font-size: 24px;
-    }
-`;
-
-const StatisticalCard: React.FC<CardProps & { value: number }> = ({ value, ...props }) => {
-    return (
-        <Card loading={value < 0} {...props}>
-            <StyledCardMeta description={value} />
-        </Card>
-    );
-};
 
 const HomePage: React.FC = () => {
     const [usersCount, setUsersCount] = useState<number>(-1);
