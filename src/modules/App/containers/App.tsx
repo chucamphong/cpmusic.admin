@@ -7,6 +7,7 @@ import AccountPage from "pages/Account";
 import ArtistPage from "pages/Artists";
 import AddArtistPage from "pages/Artists/add";
 import EditArtistPage from "pages/Artists/edit";
+import CategoryPage from "pages/Category";
 import AccessDenied from "pages/Error/AccessDenied";
 import NoMatch from "pages/Error/NoMatch";
 import HomePage from "pages/Home";
@@ -52,6 +53,10 @@ const AppContainer: React.FC = () => {
                 </ProtectedRoute>
                 <ProtectedRoute path={"/nghe-si/:id"} action={"update"} subject={"artists"} exact>
                     <EditArtistPage />
+                </ProtectedRoute>
+                {/* Quản lý thể loại */}
+                <ProtectedRoute path={"/the-loai"} action="view" subject="categories" exact>
+                    <CategoryPage />
                 </ProtectedRoute>
                 {/* Quản lý bài hát */}
                 <ProtectedRoute path={"/bai-hat"} action={"view"} subject={"songs"} exact>
