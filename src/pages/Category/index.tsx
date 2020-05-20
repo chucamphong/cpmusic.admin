@@ -109,7 +109,7 @@ const CategoryPage: React.FC = () => {
 
     return (
         <PageHeader title="Quản Lý Thể Loại" breadcrumb={breadcrumb} onBack={() => history.goBack()} extra={[
-            <Link to="/nghe-si/tao-nghe-si" key="create">
+            <Link to="/the-loai/tao-the-loai" key="create">
                 <Button type="primary" icon={<PlusOutlined />}>Thêm</Button>
             </Link>,
         ]}>
