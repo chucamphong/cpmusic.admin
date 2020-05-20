@@ -9,6 +9,7 @@ import AddArtistPage from "pages/Artists/add";
 import EditArtistPage from "pages/Artists/edit";
 import CategoryPage from "pages/Category";
 import AddCategoryPage from "pages/Category/add";
+import EditCategoryPage from "pages/Category/edit";
 import AccessDenied from "pages/Error/AccessDenied";
 import NoMatch from "pages/Error/NoMatch";
 import HomePage from "pages/Home";
@@ -61,6 +62,9 @@ const AppContainer: React.FC = () => {
                 </ProtectedRoute>
                 <ProtectedRoute path={"/the-loai/tao-the-loai"} action="create" subject="categories" exact>
                     <AddCategoryPage />
+                </ProtectedRoute>
+                <ProtectedRoute path={"/the-loai/:id"} action="update" subject="categories" exact>
+                    <EditCategoryPage />
                 </ProtectedRoute>
                 {/* Quản lý bài hát */}
                 <ProtectedRoute path={"/bai-hat"} action={"view"} subject={"songs"} exact>

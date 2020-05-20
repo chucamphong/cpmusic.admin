@@ -131,7 +131,7 @@ const CategoryPage: React.FC = () => {
                                 onConfirm={() => deleteCategory(category)}>
                                 <Button type="primary" icon={<DeleteOutlined />} danger />
                             </Popconfirm>
-                            <Link to={`/nghe-si/${category.id}`}>
+                            <Link to={`/the-loai/${category.id}`}>
                                 <Button type="primary" icon={<EditOutlined />} />
                             </Link>
                         </Space>
