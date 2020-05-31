@@ -1,3 +1,3 @@
 export default {
-    baseURL: "http://api.cpmusic.com/api",
+    baseURL: "http://cpmusic.com/api",
 };
