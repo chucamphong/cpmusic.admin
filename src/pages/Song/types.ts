@@ -11,5 +11,6 @@ export type Song = {
     year: number | Moment;
     views: number;
     category: Category;
+    country: string;
     artists: Artist[]
 };

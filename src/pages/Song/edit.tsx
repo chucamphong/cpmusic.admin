@@ -59,6 +59,10 @@ const rules: ArrayDictionary<Rule> = {
         required: true,
         message: "Không được để trống thể loại",
     }],
+    country: [{
+        required: true,
+        message: "Không được để trống quốc gia",
+    }],
     artists: [{
         required: true,
         message: "Không được để trống nghệ sĩ",
@@ -142,7 +146,7 @@ const EditSongPage: React.FC = () => {
             showLoading(true);
 
             data["year"] = (data.year as moment.Moment)?.year();
-            
+
             // Gửi request
             const response = await songService.update(+params.id, data);
 
@@ -185,7 +189,7 @@ const EditSongPage: React.FC = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                         <Form.Item name="other_name" label="Tên khác" rules={rules.other_name}>
-                            <Input maxLength={255}  />
+                            <Input maxLength={255} />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
@@ -216,6 +220,21 @@ const EditSongPage: React.FC = () => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
+                        <Form.Item name="country" label="Quốc gia" rules={rules.country}>
+                            <Select placeholder="Chọn thể loại bài hát" showSearch>
+                                <Select.Option key="Việt Nam" value="Việt Nam">
+                                    Việt Nam
+                                </Select.Option>
+                                <Select.Option key="Hàn Quốc" value="Hàn Quốc">
+                                    Hàn Quốc
+                                </Select.Option>
+                                <Select.Option key="Âu Mỹ" value="Âu Mỹ">
+                                    Âu Mỹ
+                                </Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
                         <Form.Item name="views" label="Lượt nghe">
                             <InputNumber formatter={view => numberFormat(view as number)} min={0}
                                 style={{ width: "100%" }} />
@@ -224,7 +243,7 @@ const EditSongPage: React.FC = () => {
                     <Col xs={24} sm={12}>
                         <Form.Item name="url" label="Bài hát" rules={rules.url}>
                             <UploadSong upload={formData => songService.uploadSong(formData)}
-                                onSuccess={songUrl => form.setFieldsValue({ url: songUrl })}/>
+                                onSuccess={songUrl => form.setFieldsValue({ url: songUrl })} />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
