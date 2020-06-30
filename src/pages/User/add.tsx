@@ -84,6 +84,10 @@ const AddUserPage: React.FC = () => {
     // Gửi request tạo tài khoản lên server
     const submitForm = async (formData: Partial<User>) => {
         showLoading(true);
+        
+        if (ability.cannot("create", "users.role")) {
+            delete formData["role"];
+        }
 
         userService.create(formData)
             .then(response => {
